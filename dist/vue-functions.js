@@ -1,12 +1,12 @@
 /*!
- * vue-helper v0.0.1
+ * vue-functions v0.0.2
  * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
  * Released under the MIT License.
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (factory((global.vueHelper = {})));
+  (factory((global.vueFunctions = {})));
 }(this, (function (exports) { 'use strict';
 
   /*!

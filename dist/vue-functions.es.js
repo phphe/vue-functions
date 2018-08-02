@@ -1,5 +1,5 @@
 /*!
- * vue-helper v0.0.1
+ * vue-functions v0.0.2
  * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
  * Released under the MIT License.
  */

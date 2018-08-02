@@ -1,11 +1,11 @@
-# vue-helper
+# vue-functions
 # install
 ```sh
-npm install vue-helper
+npm install vue-functions
 ```
 # usage & api
 ```js
-import * as vh from 'vue-helper'
+import * as vh from 'vue-functions'
 vh.method(...)
 ```
 # api
