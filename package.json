@@ -1,0 +1,27 @@
+{
+  "name": "vue-helper",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/vue-helper.cjs.js",
+  "module": "dist/vue-helper.es.js",
+  "scripts": {
+    "build": "bili --format cjs,umd,umd-min,es --banner",
+    "dev": "bili --format cjs,umd --watch"
+  },
+  "author": "phphe <phphe@outlook.com> (https://github.com/phphe)",
+  "unpkg": "dist/vue-helper.js",
+  "bugs": {
+    "url": "https://github.com/phphe/vue-helper/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/phphe/vue-helper.git"
+  },
+  "devDependencies": {
+    "bili": "^3.1.2"
+  },
+  "dependencies": {
+    "helper-js": "^1.1.1"
+  },
+  "license": "MIT"
+}
