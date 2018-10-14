@@ -55,3 +55,7 @@ export function updatablePropsEvenUnbound(props) {
   }
   return component
 }
+
+export function isPropTrue(value) {
+  return value === '' || value
+}

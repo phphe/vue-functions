@@ -1,5 +1,5 @@
 /*!
- * vue-functions v0.0.3
+ * vue-functions v0.0.4
  * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
  * Released under the MIT License.
  */
@@ -119,5 +119,8 @@ function updatablePropsEvenUnbound(props) {
 
   return component;
 }
+function isPropTrue(value) {
+  return value === '' || value;
+}
 
-export { updatablePropsEvenUnbound };
+export { updatablePropsEvenUnbound, isPropTrue };
