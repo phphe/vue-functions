@@ -1,5 +1,14 @@
 import * as hp from 'helper-js'
 
+/**
+ * [updatablePropsEvenUnbound description]
+ * @param  {[type]} props [description]
+ * @return {[type]}       [description]
+ * props eg: {
+    value: {localName: 'current'},
+  }
+   default localName is `localProps_${name}`
+ */
 export function updatablePropsEvenUnbound(props) {
   const component = {
     props,
