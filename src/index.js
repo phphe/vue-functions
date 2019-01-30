@@ -2,7 +2,7 @@ import * as hp from 'helper-js'
 
 /**
  * [updatablePropsEvenUnbound description]
- * @param  {[type]} props [description]
+ * @param  {[type]} props [un-circular object or getter]
  * @return {[type]}       [description]
  * props eg: {
     value: {localName: 'current'},
@@ -10,6 +10,11 @@ import * as hp from 'helper-js'
    default localName is `localProps_${name}`
  */
 export function updatablePropsEvenUnbound(props) {
+  if (hp.isFunction(props)) {
+    props = props()
+  } else {
+    props = JSON.parse(JSON.stringify(props))
+  }
   const component = {
     props,
     computed: {},
