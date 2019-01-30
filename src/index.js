@@ -73,3 +73,70 @@ export function updatablePropsEvenUnbound(props) {
 export function isPropTrue(value) {
   return value === '' || value
 }
+
+// the dependences in getter can't be auto resolved. must use exec to include dependences
+export function watchAsync(vm, getter, handler, opt) {
+  let destroies = []
+  let value, oldValue
+  let count = -1 // updated count
+  main()
+  return destroy
+  function destroy() {
+    destroies.forEach(f => f())
+    destroies = []
+  }
+  function exec(getter, opt) {
+    let value
+    let first = true
+    const unwatch = vm.$watch(() => getter.call(vm, exec), value2 => {
+      value = value2
+      if (first) {
+        first = false
+      } else {
+        main()
+      }
+    }, {immediate: true, deep: opt && opt.deep})
+    destroies.push(unwatch)
+    return value
+  }
+  function main() {
+    destroy()
+    const result = getter.call(vm, exec)
+    count++
+    const localCount = count
+    oldValue = value
+    const getterExecuted = (value) => {
+      if (localCount !== count) {
+        // expired
+        return
+      }
+      if (localCount === 0) {
+        if (opt && opt.immediate) {
+          handler.call(vm, value, oldValue)
+        }
+      } else {
+        handler.call(vm, value, oldValue)
+      }
+    }
+    //
+    if (hp.isPromise(result)) {
+      result.then(getterExecuted)
+    } else {
+      getterExecuted(result)
+    }
+  }
+}
+// do handler first, handler return getter
+export function doWatch(vm, handler) {
+  let oldValue, unwatch
+  const update = () => {
+    const getter = handler.call(vm, oldValue)
+    unwatch = vm.$watch(getter, (value) => {
+      unwatch()
+      oldValue = value
+      update()
+    })
+  }
+  update()
+  return () => unwatch && unwatch()
+}
