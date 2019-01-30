@@ -1,5 +1,5 @@
 /*!
- * vue-functions v0.0.4
+ * vue-functions v0.0.6
  * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
  * Released under the MIT License.
  */
@@ -89,13 +89,6 @@ function updatablePropsEvenUnbound(props) {
       var name = _step2.value;
 
       component.watch[name] = function (value) {
-        var ignore = "_ignoreOnce_".concat(name);
-
-        if (this[ignore]) {
-          this[ignore] = false;
-          return;
-        }
-
         this.localValueOfUpdatableProps[name] = value;
       };
 
@@ -105,9 +98,6 @@ function updatablePropsEvenUnbound(props) {
           return this.localValueOfUpdatableProps[name];
         },
         set: function set(value) {
-          var ignore = "_ignoreOnce_".concat(name);
-          this[ignore] = true;
-
           if (name === 'value') {
             this.$emit('input', value);
           } else {
