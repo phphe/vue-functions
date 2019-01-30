@@ -9,7 +9,23 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var hp = require('helper-js');
 
+/**
+ * [updatablePropsEvenUnbound description]
+ * @param  {[type]} props [un-circular object or getter]
+ * @return {[type]}       [description]
+ * props eg: {
+    value: {localName: 'current'},
+  }
+   default localName is `localProps_${name}`
+ */
+
 function updatablePropsEvenUnbound(props) {
+  if (hp.isFunction(props)) {
+    props = props();
+  } else {
+    props = JSON.parse(JSON.stringify(props));
+  }
+
   var component = {
     props: props,
     computed: {},
@@ -125,7 +141,94 @@ function updatablePropsEvenUnbound(props) {
 }
 function isPropTrue(value) {
   return value === '' || value;
+} // the dependences in getter can't be auto resolved. must use exec to include dependences
+
+function watchAsync(vm, getter, handler, opt) {
+  var destroies = [];
+  var value, oldValue;
+  var count = -1; // updated count
+
+  main();
+  return destroy;
+
+  function destroy() {
+    destroies.forEach(function (f) {
+      return f();
+    });
+    destroies = [];
+  }
+
+  function exec(getter, opt) {
+    var value;
+    var first = true;
+    var unwatch = vm.$watch(function () {
+      return getter.call(vm, exec);
+    }, function (value2) {
+      value = value2;
+
+      if (first) {
+        first = false;
+      } else {
+        main();
+      }
+    }, {
+      immediate: true,
+      deep: opt && opt.deep
+    });
+    destroies.push(unwatch);
+    return value;
+  }
+
+  function main() {
+    destroy();
+    var result = getter.call(vm, exec);
+    count++;
+    var localCount = count;
+    oldValue = value;
+
+    var getterExecuted = function getterExecuted(value) {
+      if (localCount !== count) {
+        // expired
+        return;
+      }
+
+      if (localCount === 0) {
+        if (opt && opt.immediate) {
+          handler.call(vm, value, oldValue);
+        }
+      } else {
+        handler.call(vm, value, oldValue);
+      }
+    }; //
+
+
+    if (hp.isPromise(result)) {
+      result.then(getterExecuted);
+    } else {
+      getterExecuted(result);
+    }
+  }
+} // do handler first, handler return getter
+
+function doWatch(vm, handler) {
+  var oldValue, unwatch;
+
+  var update = function update() {
+    var getter = handler.call(vm, oldValue);
+    unwatch = vm.$watch(getter, function (value) {
+      unwatch();
+      oldValue = value;
+      update();
+    });
+  };
+
+  update();
+  return function () {
+    return unwatch && unwatch();
+  };
 }
 
 exports.updatablePropsEvenUnbound = updatablePropsEvenUnbound;
 exports.isPropTrue = isPropTrue;
+exports.watchAsync = watchAsync;
+exports.doWatch = doWatch;

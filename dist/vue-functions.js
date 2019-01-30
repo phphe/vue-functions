@@ -10,7 +10,7 @@
 }(this, (function (exports) { 'use strict';
 
   /*!
-   * helper-js v1.1.1
+   * helper-js v1.3.0
    * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
    * Released under the MIT License.
    */
@@ -114,25 +114,47 @@
     throw new TypeError("Invalid attempt to spread non-iterable instance");
   }
 
-  // resolve global
-  var glb;
+  // local store
+  var store = {}; // get global
 
-  try {
-    glb = global;
-  } catch (e) {
-    glb = window;
-  } // local store
+  function glb() {
+    if (store.glb) {
+      return store.glb;
+    } else {
+      // resolve global
+      var t;
+
+      try {
+        t = global;
+      } catch (e) {
+        t = window;
+      }
+
+      store.glb = t;
+      return t;
+    }
+  } // is 各种判断
   function isArray(v) {
     return Object.prototype.toString.call(v) === '[object Array]';
   }
+  function isFunction(v) {
+    return typeof v === 'function';
+  }
+  function isPromise(v) {
+    return Object.prototype.toString.call(v) === '[object Promise]';
+  }
 
   function onDOM(el, name, handler) {
+    for (var _len5 = arguments.length, args = new Array(_len5 > 3 ? _len5 - 3 : 0), _key6 = 3; _key6 < _len5; _key6++) {
+      args[_key6 - 3] = arguments[_key6];
+    }
+
     if (el.addEventListener) {
       // 所有主流浏览器，除了 IE 8 及更早 IE版本
-      el.addEventListener(name, handler);
+      el.addEventListener.apply(el, [name, handler].concat(args));
     } else if (el.attachEvent) {
       // IE 8 及更早 IE 版本
-      el.attachEvent("on".concat(name), handler);
+      el.attachEvent.apply(el, ["on".concat(name), handler].concat(args));
     }
   }
   var URLHelper =
@@ -140,7 +162,7 @@
   function () {
     // protocol, hostname, port, pastname
     function URLHelper(baseUrl) {
-      var _this = this;
+      var _this2 = this;
 
       _classCallCheck(this, URLHelper);
 
@@ -162,7 +184,7 @@
       if (t[1]) {
         t[1].split('&').forEach(function (v) {
           var t2 = v.split('=');
-          _this.search[t2[0]] = t2[1] == null ? '' : decodeURIComponent(t2[1]);
+          _this2.search[t2[0]] = t2[1] == null ? '' : decodeURIComponent(t2[1]);
         });
       }
     }
@@ -170,11 +192,11 @@
     _createClass(URLHelper, [{
       key: "getHref",
       value: function getHref() {
-        var _this2 = this;
+        var _this3 = this;
 
         var t = [this.baseUrl];
         var searchStr = Object.keys(this.search).map(function (k) {
-          return "".concat(k, "=").concat(encodeURIComponent(_this2.search[k]));
+          return "".concat(k, "=").concat(encodeURIComponent(_this3.search[k]));
         }).join('&');
 
         if (searchStr) {
@@ -187,42 +209,6 @@
 
     return URLHelper;
   }(); // 解析函数参数, 帮助重载
-
-  function makeStorageHelper(storage) {
-    return {
-      storage: storage,
-      set: function set(name, value, minutes) {
-        if (value == null) {
-          this.storage.removeItem(name);
-        } else {
-          this.storage.setItem(name, JSON.stringify({
-            value: value,
-            expired_at: minutes && new Date().getTime() / 1000 + minutes * 60
-          }));
-        }
-      },
-      get: function get$$1(name) {
-        var t = this.storage.getItem(name);
-
-        if (t) {
-          t = JSON.parse(t);
-
-          if (!t.expired_at || t.expired_at > new Date().getTime()) {
-            return t.value;
-          } else {
-            this.storage.removeItem(name);
-          }
-        }
-
-        return null;
-      },
-      clear: function clear() {
-        this.storage.clear();
-      }
-    };
-  }
-  var localStorage2 = makeStorageHelper(glb.localStorage);
-  var sessionStorage2 = makeStorageHelper(glb.sessionStorage); // 事件处理
 
   var EventProcessor =
   /*#__PURE__*/
@@ -249,10 +235,10 @@
     }, {
       key: "once",
       value: function once(name, handler) {
-        var _this3 = this;
+        var _this4 = this;
 
         var off = function off() {
-          _this3.off(name, wrappedHandler);
+          _this4.off(name, wrappedHandler);
         };
 
         var wrappedHandler = function wrappedHandler() {
@@ -288,35 +274,35 @@
       value: function emit(name) {
         // 重要: 先找到要执行的项放在新数组里, 因为执行项会改变事件项存储数组
         var items = [];
-        var _iteratorNormalCompletion4 = true;
-        var _didIteratorError4 = false;
-        var _iteratorError4 = undefined;
+        var _iteratorNormalCompletion5 = true;
+        var _didIteratorError5 = false;
+        var _iteratorError5 = undefined;
 
         try {
-          for (var _iterator4 = this.eventStore[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-            var item = _step4.value;
+          for (var _iterator5 = this.eventStore[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+            var item = _step5.value;
 
             if (item.name === name) {
               items.push(item);
             }
           }
         } catch (err) {
-          _didIteratorError4 = true;
-          _iteratorError4 = err;
+          _didIteratorError5 = true;
+          _iteratorError5 = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
-              _iterator4.return();
+            if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
+              _iterator5.return();
             }
           } finally {
-            if (_didIteratorError4) {
-              throw _iteratorError4;
+            if (_didIteratorError5) {
+              throw _iteratorError5;
             }
           }
         }
 
-        for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key4 = 1; _key4 < _len3; _key4++) {
-          args[_key4 - 1] = arguments[_key4];
+        for (var _len7 = arguments.length, args = new Array(_len7 > 1 ? _len7 - 1 : 0), _key8 = 1; _key8 < _len7; _key8++) {
+          args[_key8 - 1] = arguments[_key8];
         }
 
         for (var _i9 = 0; _i9 < items.length; _i9++) {
@@ -335,12 +321,12 @@
     _inherits(CrossWindow, _EventProcessor);
 
     function CrossWindow() {
-      var _this4;
+      var _this5;
 
       _classCallCheck(this, CrossWindow);
 
-      _this4 = _possibleConstructorReturn(this, (CrossWindow.__proto__ || Object.getPrototypeOf(CrossWindow)).call(this));
-      Object.defineProperty(_assertThisInitialized(_this4), "storageName", {
+      _this5 = _possibleConstructorReturn(this, (CrossWindow.__proto__ || Object.getPrototypeOf(CrossWindow)).call(this));
+      Object.defineProperty(_assertThisInitialized(_this5), "storageName", {
         configurable: true,
         enumerable: true,
         writable: true,
@@ -351,17 +337,17 @@
       if (!cls._listen) {
         cls._listen = true;
         onDOM(window, 'storage', function (ev) {
-          if (ev.key === _this4.storageName) {
+          if (ev.key === _this5.storageName) {
             var _get2;
 
             var event = JSON.parse(ev.newValue);
 
-            (_get2 = _get(CrossWindow.prototype.__proto__ || Object.getPrototypeOf(CrossWindow.prototype), "emit", _assertThisInitialized(_this4))).call.apply(_get2, [_this4, event.name].concat(_toConsumableArray(event.args)));
+            (_get2 = _get(CrossWindow.prototype.__proto__ || Object.getPrototypeOf(CrossWindow.prototype), "emit", _assertThisInitialized(_this5))).call.apply(_get2, [_this5, event.name].concat(_toConsumableArray(event.args)));
           }
         });
       }
 
-      return _this4;
+      return _this5;
     }
 
     _createClass(CrossWindow, [{
@@ -369,13 +355,13 @@
       value: function emit(name) {
         var _get3;
 
-        for (var _len4 = arguments.length, args = new Array(_len4 > 1 ? _len4 - 1 : 0), _key5 = 1; _key5 < _len4; _key5++) {
-          args[_key5 - 1] = arguments[_key5];
+        for (var _len8 = arguments.length, args = new Array(_len8 > 1 ? _len8 - 1 : 0), _key9 = 1; _key9 < _len8; _key9++) {
+          args[_key9 - 1] = arguments[_key9];
         }
 
         (_get3 = _get(CrossWindow.prototype.__proto__ || Object.getPrototypeOf(CrossWindow.prototype), "emit", this)).call.apply(_get3, [this, name].concat(args));
 
-        glb.localStorage.setItem(this.storageName, JSON.stringify({
+        glb().localStorage.setItem(this.storageName, JSON.stringify({
           name: name,
           args: args,
           // use random make storage event triggered every time
@@ -388,7 +374,23 @@
     return CrossWindow;
   }(EventProcessor);
 
+  /**
+   * [updatablePropsEvenUnbound description]
+   * @param  {[type]} props [un-circular object or getter]
+   * @return {[type]}       [description]
+   * props eg: {
+      value: {localName: 'current'},
+    }
+     default localName is `localProps_${name}`
+   */
+
   function updatablePropsEvenUnbound(props) {
+    if (isFunction(props)) {
+      props = props();
+    } else {
+      props = JSON.parse(JSON.stringify(props));
+    }
+
     var component = {
       props: props,
       computed: {},
@@ -504,10 +506,97 @@
   }
   function isPropTrue(value) {
     return value === '' || value;
+  } // the dependences in getter can't be auto resolved. must use exec to include dependences
+
+  function watchAsync(vm, getter, handler, opt) {
+    var destroies = [];
+    var value, oldValue;
+    var count = -1; // updated count
+
+    main();
+    return destroy;
+
+    function destroy() {
+      destroies.forEach(function (f) {
+        return f();
+      });
+      destroies = [];
+    }
+
+    function exec(getter, opt) {
+      var value;
+      var first = true;
+      var unwatch = vm.$watch(function () {
+        return getter.call(vm, exec);
+      }, function (value2) {
+        value = value2;
+
+        if (first) {
+          first = false;
+        } else {
+          main();
+        }
+      }, {
+        immediate: true,
+        deep: opt && opt.deep
+      });
+      destroies.push(unwatch);
+      return value;
+    }
+
+    function main() {
+      destroy();
+      var result = getter.call(vm, exec);
+      count++;
+      var localCount = count;
+      oldValue = value;
+
+      var getterExecuted = function getterExecuted(value) {
+        if (localCount !== count) {
+          // expired
+          return;
+        }
+
+        if (localCount === 0) {
+          if (opt && opt.immediate) {
+            handler.call(vm, value, oldValue);
+          }
+        } else {
+          handler.call(vm, value, oldValue);
+        }
+      }; //
+
+
+      if (isPromise(result)) {
+        result.then(getterExecuted);
+      } else {
+        getterExecuted(result);
+      }
+    }
+  } // do handler first, handler return getter
+
+  function doWatch(vm, handler) {
+    var oldValue, unwatch;
+
+    var update = function update() {
+      var getter = handler.call(vm, oldValue);
+      unwatch = vm.$watch(getter, function (value) {
+        unwatch();
+        oldValue = value;
+        update();
+      });
+    };
+
+    update();
+    return function () {
+      return unwatch && unwatch();
+    };
   }
 
   exports.updatablePropsEvenUnbound = updatablePropsEvenUnbound;
   exports.isPropTrue = isPropTrue;
+  exports.watchAsync = watchAsync;
+  exports.doWatch = doWatch;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
