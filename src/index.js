@@ -45,19 +45,12 @@ export function updatablePropsEvenUnbound(props) {
   }
   for (const name of propNames) {
     component.watch[name] = function (value) {
-      const ignore = `_ignoreOnce_${name}`
-      if (this[ignore]) {
-        this[ignore] = false
-        return
-      }
       this.localValueOfUpdatableProps[name] = value
     }
     const localName = localNames[name] || `localProps_${name}`
     component.computed[localName] = {
       get(){ return this.localValueOfUpdatableProps[name] },
       set(value) {
-        const ignore = `_ignoreOnce_${name}`
-        this[ignore] = true
         if (name === 'value') {
           this.$emit('input', value)
         } else {
