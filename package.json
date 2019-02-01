@@ -1,6 +1,6 @@
 {
   "name": "vue-functions",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "",
   "main": "dist/vue-functions.cjs.js",
   "module": "dist/vue-functions.es.js",

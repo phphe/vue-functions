@@ -1,6 +1,6 @@
 /*!
- * vue-functions v0.0.6
- * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
+ * vue-functions v0.0.7
+ * (c) 2019-present phphe <phphe@outlook.com> (https://github.com/phphe)
  * Released under the MIT License.
  */
 (function (global, factory) {
@@ -10,7 +10,7 @@
 }(this, (function (exports) { 'use strict';
 
   /*!
-   * helper-js v1.3.0
+   * helper-js v1.3.1
    * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
    * Released under the MIT License.
    */
@@ -582,11 +582,24 @@
       return unwatch && unwatch();
     };
   }
+  function* iterateObjectWithoutDollarDash(obj) {
+    for (var key in obj) {
+      var start = key.substr(0, 1);
+
+      if (start !== '$' && start !== '_') {
+        yield {
+          key: key,
+          value: obj[key]
+        };
+      }
+    }
+  }
 
   exports.updatablePropsEvenUnbound = updatablePropsEvenUnbound;
   exports.isPropTrue = isPropTrue;
   exports.watchAsync = watchAsync;
   exports.doWatch = doWatch;
+  exports.iterateObjectWithoutDollarDash = iterateObjectWithoutDollarDash;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
