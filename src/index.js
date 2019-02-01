@@ -133,3 +133,12 @@ export function doWatch(vm, handler) {
   update()
   return () => unwatch && unwatch()
 }
+
+export function* iterateObjectWithoutDollarDash(obj) {
+  for (const key in obj) {
+    const start = key.substr(0, 1)
+    if (start !== '$' && start !== '_') {
+      yield {key, value: obj[key]}
+    }
+  }
+}
