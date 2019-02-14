@@ -1,5 +1,5 @@
 /*!
- * vue-functions v1.0.1
+ * vue-functions v1.0.2
  * (c) 2019-present phphe <phphe@outlook.com> (https://github.com/phphe)
  * Released under the MIT License.
  */
@@ -157,6 +157,19 @@
       el.attachEvent.apply(el, ["on".concat(name), handler].concat(args));
     }
   }
+  function offDOM(el, name, handler) {
+    for (var _len6 = arguments.length, args = new Array(_len6 > 3 ? _len6 - 3 : 0), _key7 = 3; _key7 < _len6; _key7++) {
+      args[_key7 - 3] = arguments[_key7];
+    }
+
+    if (el.removeEventListener) {
+      // 所有主流浏览器，除了 IE 8 及更早 IE版本
+      el.removeEventListener.apply(el, [name, handler].concat(args));
+    } else if (el.detachEvent) {
+      // IE 8 及更早 IE 版本
+      el.detachEvent.apply(el, ["on".concat(name), handler].concat(args));
+    }
+  } // advance
   var URLHelper =
   /*#__PURE__*/
   function () {
@@ -593,13 +606,49 @@
         };
       }
     }
-  }
+  } // add reactive `windowSize`
+
+  var windowSize = {
+    data: function data() {
+      return {
+        windowSize: {
+          innerWidth: window.innerWidth,
+          innerHeight: window.innerHeight,
+          outerWidth: window.outerWidth,
+          outerHeight: window.outerHeight
+        }
+      };
+    },
+    methods: {
+      updateWindowSize: function updateWindowSize() {
+        Object.assign(this.windowSize, {
+          innerWidth: window.innerWidth,
+          innerHeight: window.innerHeight,
+          outerWidth: window.outerWidth,
+          outerHeight: window.outerHeight
+        });
+      }
+    },
+    created: function created() {
+      var _this = this;
+
+      this._windowSize_onresize = function () {
+        _this.updateWindowSize();
+      };
+
+      onDOM(window, 'resize', this._windowSize_onresize);
+    },
+    beforeDestroy: function beforeDestroy() {
+      offDOM(window, 'resize', this._windowSize_onresize);
+    }
+  };
 
   exports.updatablePropsEvenUnbound = updatablePropsEvenUnbound;
   exports.isPropTrue = isPropTrue;
   exports.watchAsync = watchAsync;
   exports.doWatch = doWatch;
   exports.iterateObjectWithoutDollarDash = iterateObjectWithoutDollarDash;
+  exports.windowSize = windowSize;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

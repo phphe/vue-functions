@@ -1,9 +1,9 @@
 /*!
- * vue-functions v1.0.1
+ * vue-functions v1.0.2
  * (c) 2019-present phphe <phphe@outlook.com> (https://github.com/phphe)
  * Released under the MIT License.
  */
-import { isFunction, isArray, isPromise } from 'helper-js';
+import { isFunction, isArray, isPromise, onDOM, offDOM } from 'helper-js';
 
 /**
  * [updatablePropsEvenUnbound description]
@@ -224,6 +224,41 @@ function* iterateObjectWithoutDollarDash(obj) {
       };
     }
   }
-}
+} // add reactive `windowSize`
 
-export { updatablePropsEvenUnbound, isPropTrue, watchAsync, doWatch, iterateObjectWithoutDollarDash };
+var windowSize = {
+  data: function data() {
+    return {
+      windowSize: {
+        innerWidth: window.innerWidth,
+        innerHeight: window.innerHeight,
+        outerWidth: window.outerWidth,
+        outerHeight: window.outerHeight
+      }
+    };
+  },
+  methods: {
+    updateWindowSize: function updateWindowSize() {
+      Object.assign(this.windowSize, {
+        innerWidth: window.innerWidth,
+        innerHeight: window.innerHeight,
+        outerWidth: window.outerWidth,
+        outerHeight: window.outerHeight
+      });
+    }
+  },
+  created: function created() {
+    var _this = this;
+
+    this._windowSize_onresize = function () {
+      _this.updateWindowSize();
+    };
+
+    onDOM(window, 'resize', this._windowSize_onresize);
+  },
+  beforeDestroy: function beforeDestroy() {
+    offDOM(window, 'resize', this._windowSize_onresize);
+  }
+};
+
+export { updatablePropsEvenUnbound, isPropTrue, watchAsync, doWatch, iterateObjectWithoutDollarDash, windowSize };

@@ -1,5 +1,5 @@
 /*!
- * vue-functions v1.0.1
+ * vue-functions v1.0.2
  * (c) 2019-present phphe <phphe@outlook.com> (https://github.com/phphe)
  * Released under the MIT License.
  */
@@ -228,10 +228,46 @@ function* iterateObjectWithoutDollarDash(obj) {
       };
     }
   }
-}
+} // add reactive `windowSize`
+
+var windowSize = {
+  data: function data() {
+    return {
+      windowSize: {
+        innerWidth: window.innerWidth,
+        innerHeight: window.innerHeight,
+        outerWidth: window.outerWidth,
+        outerHeight: window.outerHeight
+      }
+    };
+  },
+  methods: {
+    updateWindowSize: function updateWindowSize() {
+      Object.assign(this.windowSize, {
+        innerWidth: window.innerWidth,
+        innerHeight: window.innerHeight,
+        outerWidth: window.outerWidth,
+        outerHeight: window.outerHeight
+      });
+    }
+  },
+  created: function created() {
+    var _this = this;
+
+    this._windowSize_onresize = function () {
+      _this.updateWindowSize();
+    };
+
+    hp.onDOM(window, 'resize', this._windowSize_onresize);
+  },
+  beforeDestroy: function beforeDestroy() {
+    hp.offDOM(window, 'resize', this._windowSize_onresize);
+  }
+};
 
 exports.updatablePropsEvenUnbound = updatablePropsEvenUnbound;
 exports.isPropTrue = isPropTrue;
 exports.watchAsync = watchAsync;
 exports.doWatch = doWatch;
 exports.iterateObjectWithoutDollarDash = iterateObjectWithoutDollarDash;
+exports.windowSize = windowSize;
