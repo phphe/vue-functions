@@ -142,3 +142,36 @@ export function* iterateObjectWithoutDollarDash(obj) {
     }
   }
 }
+
+// add reactive `windowSize`
+export const windowSize = {
+  data() {
+    return {
+      windowSize: {
+        innerWidth: window.innerWidth,
+        innerHeight: window.innerHeight,
+        outerWidth: window.outerWidth,
+        outerHeight: window.outerHeight,
+      },
+    }
+  },
+  methods: {
+    updateWindowSize() {
+      Object.assign(this.windowSize, {
+        innerWidth: window.innerWidth,
+        innerHeight: window.innerHeight,
+        outerWidth: window.outerWidth,
+        outerHeight: window.outerHeight,
+      })
+    },
+  },
+  created() {
+    this._windowSize_onresize = () => {
+      this.updateWindowSize()
+    }
+    hp.onDOM(window, 'resize', this._windowSize_onresize)
+  },
+  beforeDestroy() {
+    hp.offDOM(window, 'resize', this._windowSize_onresize)
+  },
+}
