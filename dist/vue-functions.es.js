@@ -1,5 +1,5 @@
 /*!
- * vue-functions v1.0.2
+ * vue-functions v1.0.3
  * (c) 2019-present phphe <phphe@outlook.com> (https://github.com/phphe)
  * Released under the MIT License.
  */
@@ -252,6 +252,8 @@ var windowSize = {
 
     this._windowSize_onresize = function () {
       _this.updateWindowSize();
+
+      _this.$emit('window-resize');
     };
 
     onDOM(window, 'resize', this._windowSize_onresize);

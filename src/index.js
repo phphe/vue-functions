@@ -168,6 +168,7 @@ export const windowSize = {
   created() {
     this._windowSize_onresize = () => {
       this.updateWindowSize()
+      this.$emit('window-resize')
     }
     hp.onDOM(window, 'resize', this._windowSize_onresize)
   },
