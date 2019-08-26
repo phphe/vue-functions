@@ -1,5 +1,5 @@
 /*!
- * vue-functions v1.0.3
+ * vue-functions v1.0.4
  * (c) 2019-present phphe <phphe@outlook.com> (https://github.com/phphe)
  * Released under the MIT License.
  */
@@ -22,8 +22,11 @@ var hp = require('helper-js');
 function updatablePropsEvenUnbound(props) {
   if (hp.isFunction(props)) {
     props = props();
+  } else if (hp.isArray(props)) {
+    props = props.slice();
   } else {
-    props = JSON.parse(JSON.stringify(props));
+    // object
+    props = Object.assign({}, props);
   }
 
   var component = {

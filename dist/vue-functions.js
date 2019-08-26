@@ -1,5 +1,5 @@
 /*!
- * vue-functions v1.0.3
+ * vue-functions v1.0.4
  * (c) 2019-present phphe <phphe@outlook.com> (https://github.com/phphe)
  * Released under the MIT License.
  */
@@ -10,8 +10,8 @@
 }(this, (function (exports) { 'use strict';
 
   /*!
-   * helper-js v1.3.1
-   * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
+   * helper-js v1.4.3
+   * (c) phphe <phphe@outlook.com> (https://github.com/phphe)
    * Released under the MIT License.
    */
 
@@ -37,29 +37,19 @@
     return Constructor;
   }
 
-  function _get(object, property, receiver) {
-    if (object === null) object = Function.prototype;
-    var desc = Object.getOwnPropertyDescriptor(object, property);
-
-    if (desc === undefined) {
-      var parent = Object.getPrototypeOf(object);
-
-      if (parent === null) {
-        return undefined;
-      } else {
-        return _get(parent, property, receiver);
-      }
-    } else if ("value" in desc) {
-      return desc.value;
+  function _defineProperty(obj, key, value) {
+    if (key in obj) {
+      Object.defineProperty(obj, key, {
+        value: value,
+        enumerable: true,
+        configurable: true,
+        writable: true
+      });
     } else {
-      var getter = desc.get;
-
-      if (getter === undefined) {
-        return undefined;
-      }
-
-      return getter.call(receiver);
+      obj[key] = value;
     }
+
+    return obj;
   }
 
   function _inherits(subClass, superClass) {
@@ -70,12 +60,27 @@
     subClass.prototype = Object.create(superClass && superClass.prototype, {
       constructor: {
         value: subClass,
-        enumerable: false,
         writable: true,
         configurable: true
       }
     });
-    if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+    if (superClass) _setPrototypeOf(subClass, superClass);
+  }
+
+  function _getPrototypeOf(o) {
+    _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+      return o.__proto__ || Object.getPrototypeOf(o);
+    };
+    return _getPrototypeOf(o);
+  }
+
+  function _setPrototypeOf(o, p) {
+    _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+      o.__proto__ = p;
+      return o;
+    };
+
+    return _setPrototypeOf(o, p);
   }
 
   function _assertThisInitialized(self) {
@@ -92,6 +97,36 @@
     }
 
     return _assertThisInitialized(self);
+  }
+
+  function _superPropBase(object, property) {
+    while (!Object.prototype.hasOwnProperty.call(object, property)) {
+      object = _getPrototypeOf(object);
+      if (object === null) break;
+    }
+
+    return object;
+  }
+
+  function _get(target, property, receiver) {
+    if (typeof Reflect !== "undefined" && Reflect.get) {
+      _get = Reflect.get;
+    } else {
+      _get = function _get(target, property, receiver) {
+        var base = _superPropBase(target, property);
+
+        if (!base) return;
+        var desc = Object.getOwnPropertyDescriptor(base, property);
+
+        if (desc.get) {
+          return desc.get.call(receiver);
+        }
+
+        return desc.value;
+      };
+    }
+
+    return _get(target, property, receiver || target);
   }
 
   function _toConsumableArray(arr) {
@@ -116,6 +151,7 @@
 
   // local store
   var store = {}; // get global
+  // `this` !== global or window because of build tool
 
   function glb() {
     if (store.glb) {
@@ -144,6 +180,39 @@
     return Object.prototype.toString.call(v) === '[object Promise]';
   }
 
+  function numRand(min, max) {
+    if (arguments.length === 1) {
+      max = min;
+      min = 0;
+    }
+
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+  function strRand() {
+    var len = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 8;
+    var prefix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+    var r = '';
+    var seeds = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+    for (var i = 0; i < len; i++) {
+      r += seeds[numRand(seeds.length - 1)];
+    }
+
+    return prefix + r;
+  }
+
+  function arrayRemove(arr, v) {
+    var index;
+    var count = 0;
+
+    while ((index = arr.indexOf(v)) > -1) {
+      arr.splice(index, 1);
+      count++;
+    }
+
+    return count;
+  }
+
   function onDOM(el, name, handler) {
     for (var _len5 = arguments.length, args = new Array(_len5 > 3 ? _len5 - 3 : 0), _key6 = 3; _key6 < _len5; _key6++) {
       args[_key6 - 3] = arguments[_key6];
@@ -169,35 +238,35 @@
       // IE 8 及更早 IE 版本
       el.detachEvent.apply(el, ["on".concat(name), handler].concat(args));
     }
-  } // advance
+  }
+  function waitTime(milliseconds, callback) {
+    return new Promise(function (resolve, reject) {
+      setTimeout(function () {
+        callback && callback();
+        resolve();
+      }, milliseconds);
+    });
+  } // overload waitFor(condition, time = 100, maxCount = 1000))
   var URLHelper =
   /*#__PURE__*/
   function () {
     // protocol, hostname, port, pastname
     function URLHelper(baseUrl) {
-      var _this2 = this;
+      var _this3 = this;
 
       _classCallCheck(this, URLHelper);
 
-      Object.defineProperty(this, "baseUrl", {
-        configurable: true,
-        enumerable: true,
-        writable: true,
-        value: ''
-      });
-      Object.defineProperty(this, "search", {
-        configurable: true,
-        enumerable: true,
-        writable: true,
-        value: {}
-      });
+      _defineProperty(this, "baseUrl", '');
+
+      _defineProperty(this, "search", {});
+
       var t = decodeURI(baseUrl).split('?');
       this.baseUrl = t[0];
 
       if (t[1]) {
         t[1].split('&').forEach(function (v) {
           var t2 = v.split('=');
-          _this2.search[t2[0]] = t2[1] == null ? '' : decodeURIComponent(t2[1]);
+          _this3.search[t2[0]] = t2[1] == null ? '' : decodeURIComponent(t2[1]);
         });
       }
     }
@@ -205,11 +274,11 @@
     _createClass(URLHelper, [{
       key: "getHref",
       value: function getHref() {
-        var _this3 = this;
+        var _this4 = this;
 
         var t = [this.baseUrl];
         var searchStr = Object.keys(this.search).map(function (k) {
-          return "".concat(k, "=").concat(encodeURIComponent(_this3.search[k]));
+          return "".concat(k, "=").concat(encodeURIComponent(_this4.search[k]));
         }).join('&');
 
         if (searchStr) {
@@ -229,12 +298,7 @@
     function EventProcessor() {
       _classCallCheck(this, EventProcessor);
 
-      Object.defineProperty(this, "eventStore", {
-        configurable: true,
-        enumerable: true,
-        writable: true,
-        value: []
-      });
+      _defineProperty(this, "eventStore", []);
     }
 
     _createClass(EventProcessor, [{
@@ -248,19 +312,47 @@
     }, {
       key: "once",
       value: function once(name, handler) {
-        var _this4 = this;
+        var _this5 = this;
 
         var off = function off() {
-          _this4.off(name, wrappedHandler);
+          _this5.off(name, wrappedHandler);
         };
 
         var wrappedHandler = function wrappedHandler() {
-          handler();
+          handler.apply(void 0, arguments);
           off();
         };
 
         this.on(name, wrappedHandler);
         return off;
+      }
+    }, {
+      key: "onceTimeout",
+      value: function onceTimeout(name, handler, timeout) {
+        var _this6 = this;
+
+        var off;
+        var promise = new Promise(function (resolve, reject) {
+          var wrappedHandler = function wrappedHandler() {
+            handler.apply(void 0, arguments);
+            resolve();
+          };
+
+          off = _this6.once(name, wrappedHandler);
+          waitTime(timeout).then(function () {
+            off();
+            reject();
+          });
+        });
+
+        var off2 = function off2() {
+          off && off();
+        };
+
+        return {
+          off: off2,
+          promise: promise
+        };
       }
     }, {
       key: "off",
@@ -277,8 +369,8 @@
           }
         }
 
-        for (var _i8 = 0; _i8 < indexes.length; _i8++) {
-          var index = indexes[_i8];
+        for (var _i8 = 0, _indexes = indexes; _i8 < _indexes.length; _i8++) {
+          var index = _indexes[_i8];
           this.eventStore.splice(index, 1);
         }
       }
@@ -287,39 +379,39 @@
       value: function emit(name) {
         // 重要: 先找到要执行的项放在新数组里, 因为执行项会改变事件项存储数组
         var items = [];
-        var _iteratorNormalCompletion5 = true;
-        var _didIteratorError5 = false;
-        var _iteratorError5 = undefined;
+        var _iteratorNormalCompletion9 = true;
+        var _didIteratorError9 = false;
+        var _iteratorError9 = undefined;
 
         try {
-          for (var _iterator5 = this.eventStore[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-            var item = _step5.value;
+          for (var _iterator9 = this.eventStore[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+            var item = _step9.value;
 
             if (item.name === name) {
               items.push(item);
             }
           }
         } catch (err) {
-          _didIteratorError5 = true;
-          _iteratorError5 = err;
+          _didIteratorError9 = true;
+          _iteratorError9 = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
-              _iterator5.return();
+            if (!_iteratorNormalCompletion9 && _iterator9["return"] != null) {
+              _iterator9["return"]();
             }
           } finally {
-            if (_didIteratorError5) {
-              throw _iteratorError5;
+            if (_didIteratorError9) {
+              throw _iteratorError9;
             }
           }
         }
 
-        for (var _len7 = arguments.length, args = new Array(_len7 > 1 ? _len7 - 1 : 0), _key8 = 1; _key8 < _len7; _key8++) {
-          args[_key8 - 1] = arguments[_key8];
+        for (var _len8 = arguments.length, args = new Array(_len8 > 1 ? _len8 - 1 : 0), _key9 = 1; _key9 < _len8; _key9++) {
+          args[_key9 - 1] = arguments[_key9];
         }
 
-        for (var _i9 = 0; _i9 < items.length; _i9++) {
-          var _item = items[_i9];
+        for (var _i9 = 0, _items = items; _i9 < _items.length; _i9++) {
+          var _item = _items[_i9];
 
           _item.handler.apply(_item, args);
         }
@@ -328,64 +420,178 @@
 
     return EventProcessor;
   }();
-  var CrossWindow =
+  var CrossWindowEventProcessor =
   /*#__PURE__*/
   function (_EventProcessor) {
-    _inherits(CrossWindow, _EventProcessor);
+    _inherits(CrossWindowEventProcessor, _EventProcessor);
 
-    function CrossWindow() {
-      var _this5;
+    // id
+    function CrossWindowEventProcessor() {
+      var _this7;
 
-      _classCallCheck(this, CrossWindow);
+      _classCallCheck(this, CrossWindowEventProcessor);
 
-      _this5 = _possibleConstructorReturn(this, (CrossWindow.__proto__ || Object.getPrototypeOf(CrossWindow)).call(this));
-      Object.defineProperty(_assertThisInitialized(_this5), "storageName", {
-        configurable: true,
-        enumerable: true,
-        writable: true,
-        value: '_crossWindow'
+      _this7 = _possibleConstructorReturn(this, _getPrototypeOf(CrossWindowEventProcessor).call(this));
+
+      _defineProperty(_assertThisInitialized(_this7), "storageName", '_crossWindow');
+
+      _defineProperty(_assertThisInitialized(_this7), "windows", []);
+
+      _defineProperty(_assertThisInitialized(_this7), "BROADCAST", '__BROADCAST__');
+
+      onDOM(window, 'storage', function (ev) {
+        if (ev.key === _this7.storageName) {
+          var event = JSON.parse(ev.newValue);
+
+          if (!event.targets || event.targets.includes(_this7.id)) {
+            var _this8;
+
+            (_this8 = _this7).emitLocal.apply(_this8, [event.name].concat(_toConsumableArray(event.args)));
+          }
+        }
+      }); // social parts 集体部分
+      // join
+
+      _this7.id = strRand();
+      _this7.windows = [_this7.id];
+      _this7.ready = new Promise(function (resolve, reject) {
+        _this7.onceTimeout('_windows_updated', function (_ref) {
+          var windows = _ref.windows;
+          _this7.windows = windows;
+        }, 200).promise.then(function () {
+          resolve(); // responsed 被响应
+        }, function () {
+          // no response 无响应
+          resolve();
+        });
+
+        _this7.broadcast('_join', _this7.id);
       });
-      var cls = CrossWindow;
 
-      if (!cls._listen) {
-        cls._listen = true;
-        onDOM(window, 'storage', function (ev) {
-          if (ev.key === _this5.storageName) {
-            var _get2;
+      _this7.ready.then(function () {
+        // on join
+        _this7.on('_join', function (id) {
+          _this7.windows.push(id);
 
-            var event = JSON.parse(ev.newValue);
+          if (_this7.isMain()) {
+            _this7.broadcast('_windows_updated', {
+              windows: _this7.windows,
+              type: 'join',
+              id: id
+            });
+          }
+        }); // on _windows_updated
 
-            (_get2 = _get(CrossWindow.prototype.__proto__ || Object.getPrototypeOf(CrossWindow.prototype), "emit", _assertThisInitialized(_this5))).call.apply(_get2, [_this5, event.name].concat(_toConsumableArray(event.args)));
+
+        _this7.on('_windows_updated', function (_ref2) {
+          var windows = _ref2.windows;
+          _this7.windows = windows;
+        }); // on exit
+
+
+        _this7.on('_exit', function (id) {
+          var oldMain = _this7.windows[0];
+          arrayRemove(_this7.windows, id);
+
+          if (_this7.isMain()) {
+            _this7.emit('_windows_updated', {
+              windows: _this7.windows,
+              type: 'exit',
+              id: id
+            });
+
+            if (oldMain != _this7.id) {
+              console.log('_main_updated');
+
+              _this7.emit('_main_updated', {
+                windows: _this7.windows,
+                old: oldMain,
+                'new': _this7.id
+              });
+            }
           }
         });
-      }
 
-      return _this5;
+        onDOM(window, 'beforeunload', function () {
+          _this7.exitGroup();
+        });
+      });
+
+      return _this7;
     }
 
-    _createClass(CrossWindow, [{
-      key: "emit",
-      value: function emit(name) {
-        var _get3;
-
-        for (var _len8 = arguments.length, args = new Array(_len8 > 1 ? _len8 - 1 : 0), _key9 = 1; _key9 < _len8; _key9++) {
-          args[_key9 - 1] = arguments[_key9];
+    _createClass(CrossWindowEventProcessor, [{
+      key: "isMain",
+      value: function isMain() {
+        return this.id === this.windows[0];
+      }
+    }, {
+      key: "emitTo",
+      value: function emitTo(name, targets) {
+        for (var _len9 = arguments.length, args = new Array(_len9 > 2 ? _len9 - 2 : 0), _key10 = 2; _key10 < _len9; _key10++) {
+          args[_key10 - 2] = arguments[_key10];
         }
 
-        (_get3 = _get(CrossWindow.prototype.__proto__ || Object.getPrototypeOf(CrossWindow.prototype), "emit", this)).call.apply(_get3, [this, name].concat(args));
+        if (targets === this.BROADCAST) {
+          targets = null;
+        } else {
+          if (targets && !isArray(targets)) {
+            targets = [targets];
+          }
+
+          if (targets.includes(this.id)) {
+            var _get2;
+
+            (_get2 = _get(_getPrototypeOf(CrossWindowEventProcessor.prototype), "emit", this)).call.apply(_get2, [this, name].concat(args)); // emit to current window
+
+          }
+        }
 
         glb().localStorage.setItem(this.storageName, JSON.stringify({
           name: name,
+          targets: targets,
           args: args,
           // use random make storage event triggered every time
           // 加入随机保证触发storage事件
           random: Math.random()
         }));
       }
+    }, {
+      key: "emitLocal",
+      value: function emitLocal(name) {
+        for (var _len10 = arguments.length, args = new Array(_len10 > 1 ? _len10 - 1 : 0), _key11 = 1; _key11 < _len10; _key11++) {
+          args[_key11 - 1] = arguments[_key11];
+        }
+
+        this.emitTo.apply(this, [name, this.id].concat(args));
+      }
+    }, {
+      key: "broadcast",
+      value: function broadcast(name) {
+        for (var _len11 = arguments.length, args = new Array(_len11 > 1 ? _len11 - 1 : 0), _key12 = 1; _key12 < _len11; _key12++) {
+          args[_key12 - 1] = arguments[_key12];
+        }
+
+        this.emitTo.apply(this, [name, this.BROADCAST].concat(args));
+      }
+    }, {
+      key: "emit",
+      value: function emit(name) {
+        for (var _len12 = arguments.length, args = new Array(_len12 > 1 ? _len12 - 1 : 0), _key13 = 1; _key13 < _len12; _key13++) {
+          args[_key13 - 1] = arguments[_key13];
+        }
+
+        this.emitTo.apply(this, [name, this.windows].concat(args));
+      }
+    }, {
+      key: "exitGroup",
+      value: function exitGroup() {
+        this.broadcast('_exit', this.id);
+      }
     }]);
 
-    return CrossWindow;
-  }(EventProcessor);
+    return CrossWindowEventProcessor;
+  }(EventProcessor); // Deprecated in next version
 
   /**
    * [updatablePropsEvenUnbound description]
@@ -400,8 +606,11 @@
   function updatablePropsEvenUnbound(props) {
     if (isFunction(props)) {
       props = props();
+    } else if (isArray(props)) {
+      props = props.slice();
     } else {
-      props = JSON.parse(JSON.stringify(props));
+      // object
+      props = Object.assign({}, props);
     }
 
     var component = {
