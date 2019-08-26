@@ -12,8 +12,11 @@ import * as hp from 'helper-js'
 export function updatablePropsEvenUnbound(props) {
   if (hp.isFunction(props)) {
     props = props()
+  } else if(hp.isArray(props)) {
+    props = props.slice()
   } else {
-    props = JSON.parse(JSON.stringify(props))
+    // object
+    props = Object.assign({}, props)
   }
   const component = {
     props,
