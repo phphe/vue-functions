@@ -179,3 +179,39 @@ export const windowSize = {
     hp.offDOM(window, 'resize', this._windowSize_onresize)
   },
 }
+
+export function registerPreventURLChange(Vue, router, msg) {
+  let preventRouter = false
+  const msg0 = `It looks like you have been editing something.
+If you leave before saving, your changes will be lost.`
+  router.beforeEach((to, from, next) => {
+    if (preventRouter) {
+      if (window.confirm(msg || msg0)) {
+        Vue.allowURLChange()
+        next()
+      } else {
+        next(false)
+      }
+    } else {
+      next()
+    }
+  })
+  const beforeunload = (e) => {
+    var confirmationMessage = msg || msg0
+    e.returnValue = confirmationMessage;     // Gecko, Trident, Chrome 34+
+    return confirmationMessage;              // Gecko, WebKit, Chrome <34
+  }
+  Vue.preventURLChange = Vue.prototype.$preventURLChange = (msg2) => {
+    if (msg2 != null) {
+      msg = msg2
+    }
+    if (!preventRouter) {
+      preventRouter = true
+      window.addEventListener("beforeunload", beforeunload)
+    }
+  }
+  Vue.allowURLChange = Vue.prototype.$allowURLChange = () => {
+    preventRouter = false
+    window.removeEventListener("beforeunload", beforeunload)
+  }
+}
