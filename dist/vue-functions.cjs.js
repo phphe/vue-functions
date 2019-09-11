@@ -1,6 +1,6 @@
 /*!
- * vue-functions v1.0.4
- * (c) 2019-present phphe <phphe@outlook.com> (https://github.com/phphe)
+ * vue-functions v1.0.5
+ * (c) phphe <phphe@outlook.com> (https://github.com/phphe)
  * Released under the MIT License.
  */
 'use strict';
@@ -70,8 +70,8 @@ function updatablePropsEvenUnbound(props) {
       _iteratorError = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion && _iterator.return != null) {
-          _iterator.return();
+        if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+          _iterator["return"]();
         }
       } finally {
         if (_didIteratorError) {
@@ -120,8 +120,8 @@ function updatablePropsEvenUnbound(props) {
     _iteratorError2 = err;
   } finally {
     try {
-      if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
-        _iterator2.return();
+      if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+        _iterator2["return"]();
       }
     } finally {
       if (_didIteratorError2) {
@@ -269,10 +269,50 @@ var windowSize = {
     hp.offDOM(window, 'resize', this._windowSize_onresize);
   }
 };
+function registerPreventURLChange(Vue, router, msg) {
+  var preventRouter = false;
+  var msg0 = "It looks like you have been editing something.\nIf you leave before saving, your changes will be lost.";
+  router.beforeEach(function (to, from, next) {
+    if (preventRouter) {
+      if (window.confirm(msg || msg0)) {
+        Vue.allowURLChange();
+        next();
+      } else {
+        next(false);
+      }
+    } else {
+      next();
+    }
+  });
 
-exports.updatablePropsEvenUnbound = updatablePropsEvenUnbound;
-exports.isPropTrue = isPropTrue;
-exports.watchAsync = watchAsync;
+  var beforeunload = function beforeunload(e) {
+    var confirmationMessage = msg || msg0;
+    e.returnValue = confirmationMessage; // Gecko, Trident, Chrome 34+
+
+    return confirmationMessage; // Gecko, WebKit, Chrome <34
+  };
+
+  Vue.preventURLChange = Vue.prototype.$preventURLChange = function (msg2) {
+    if (msg2 != null) {
+      msg = msg2;
+    }
+
+    if (!preventRouter) {
+      preventRouter = true;
+      window.addEventListener("beforeunload", beforeunload);
+    }
+  };
+
+  Vue.allowURLChange = Vue.prototype.$allowURLChange = function () {
+    preventRouter = false;
+    window.removeEventListener("beforeunload", beforeunload);
+  };
+}
+
 exports.doWatch = doWatch;
+exports.isPropTrue = isPropTrue;
 exports.iterateObjectWithoutDollarDash = iterateObjectWithoutDollarDash;
+exports.registerPreventURLChange = registerPreventURLChange;
+exports.updatablePropsEvenUnbound = updatablePropsEvenUnbound;
+exports.watchAsync = watchAsync;
 exports.windowSize = windowSize;
