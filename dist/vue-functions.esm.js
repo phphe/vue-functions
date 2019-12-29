@@ -1,10 +1,52 @@
 /*!
- * vue-functions v1.0.5
- * (c) phphe <phphe@outlook.com> (https://github.com/phphe)
- * Released under the MIT License.
- */
-import { isFunction, isArray, isPromise, onDOM, offDOM } from 'helper-js';
+* vue-functions v1.0.6
+* (c) phphe <phphe@outlook.com> (https://github.com/phphe)
+* Released under the MIT License.
+*/
+function isArray(v) {
+  return Object.prototype.toString.call(v) === '[object Array]';
+}
 
+function isFunction(v) {
+  return typeof v === 'function';
+}
+
+function isPromise(v) {
+  return Object.prototype.toString.call(v) === '[object Promise]';
+}
+
+
+function onDOM(el, name, handler) {
+  for (var _len6 = arguments.length, args = new Array(_len6 > 3 ? _len6 - 3 : 0), _key8 = 3; _key8 < _len6; _key8++) {
+    args[_key8 - 3] = arguments[_key8];
+  }
+
+  if (el.addEventListener) {
+    // 所有主流浏览器，除了 IE 8 及更早 IE版本
+    el.addEventListener.apply(el, [name, handler].concat(args));
+  } else if (el.attachEvent) {
+    // IE 8 及更早 IE 版本
+    el.attachEvent.apply(el, ["on".concat(name), handler].concat(args));
+  }
+}
+
+function offDOM(el, name, handler) {
+  for (var _len7 = arguments.length, args = new Array(_len7 > 3 ? _len7 - 3 : 0), _key9 = 3; _key9 < _len7; _key9++) {
+    args[_key9 - 3] = arguments[_key9];
+  }
+
+  if (el.removeEventListener) {
+    // 所有主流浏览器，除了 IE 8 及更早 IE版本
+    el.removeEventListener.apply(el, [name, handler].concat(args));
+  } else if (el.detachEvent) {
+    // IE 8 及更早 IE 版本
+    el.detachEvent.apply(el, ["on".concat(name), handler].concat(args));
+  }
+}
+
+var _marked =
+/*#__PURE__*/
+regeneratorRuntime.mark(iterateObjectWithoutDollarDash);
 /**
  * [updatablePropsEvenUnbound description]
  * @param  {[type]} props [un-circular object or getter]
@@ -216,17 +258,44 @@ function doWatch(vm, handler) {
     return unwatch && unwatch();
   };
 }
-function* iterateObjectWithoutDollarDash(obj) {
-  for (var key in obj) {
-    var start = key.substr(0, 1);
+function iterateObjectWithoutDollarDash(obj) {
+  var key, start;
+  return regeneratorRuntime.wrap(function iterateObjectWithoutDollarDash$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          _context.t0 = regeneratorRuntime.keys(obj);
 
-    if (start !== '$' && start !== '_') {
-      yield {
-        key: key,
-        value: obj[key]
-      };
+        case 1:
+          if ((_context.t1 = _context.t0()).done) {
+            _context.next = 9;
+            break;
+          }
+
+          key = _context.t1.value;
+          start = key.substr(0, 1);
+
+          if (!(start !== '$' && start !== '_')) {
+            _context.next = 7;
+            break;
+          }
+
+          _context.next = 7;
+          return {
+            key: key,
+            value: obj[key]
+          };
+
+        case 7:
+          _context.next = 1;
+          break;
+
+        case 9:
+        case "end":
+          return _context.stop();
+      }
     }
-  }
+  }, _marked);
 } // add reactive `windowSize`
 
 var windowSize = {
