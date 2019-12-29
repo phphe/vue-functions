@@ -1,6 +1,6 @@
 {
   "name": "vue-functions",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "",
   "main": "dist/vue-functions.cjs.js",
   "module": "dist/vue-functions.esm.js",
@@ -8,8 +8,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "bili --format cjs --format umd  --format umd-min --format esm --banner",
-    "dev": "bili --watch"
+    "build": "node scripts/build.js",
+    "dev": "node scripts/build.js --watch",
+    "build-test": "rollup -c"
   },
   "author": "phphe <phphe@outlook.com> (https://github.com/phphe)",
   "unpkg": "dist/vue-functions.js",
@@ -21,16 +22,10 @@
     "url": "https://github.com/phphe/vue-functions.git"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.5.5",
-    "@babel/plugin-proposal-decorators": "^7.4.4",
-    "@babel/plugin-proposal-export-namespace-from": "^7.5.2",
-    "@babel/plugin-proposal-function-sent": "^7.5.0",
-    "@babel/plugin-proposal-numeric-separator": "^7.2.0",
-    "@babel/plugin-proposal-throw-expressions": "^7.2.0",
-    "bili": "^4.8.1"
+    "rollup-helper": "^2.0.1"
   },
   "dependencies": {
-    "helper-js": "^1.4.5"
+    "helper-js": "^1.4.14"
   },
   "license": "MIT"
 }
