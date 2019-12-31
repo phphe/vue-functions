@@ -1,5 +1,5 @@
 /*!
-* vue-functions v1.0.6
+* vue-functions v2.0.0
 * (c) phphe <phphe@outlook.com> (https://github.com/phphe)
 * Released under the MIT License.
 */
@@ -9,8 +9,32 @@
   (global = global || self, factory(global.vueFunctions = {}));
 }(this, (function (exports) { 'use strict';
 
-  function isArray(v) {
-    return Object.prototype.toString.call(v) === '[object Array]';
+  function _toConsumableArray(arr) {
+    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+  }
+
+  function _arrayWithoutHoles(arr) {
+    if (Array.isArray(arr)) {
+      for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+      return arr2;
+    }
+  }
+
+  function _iterableToArray(iter) {
+    if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+  }
+
+  function _nonIterableSpread() {
+    throw new TypeError("Invalid attempt to spread non-iterable instance");
+  }
+
+  var _marked =
+  /*#__PURE__*/
+  regeneratorRuntime.mark(iterateALL); // local store
+
+  function isObject(v) {
+    return Object.prototype.toString.call(v) === '[object Object]';
   }
 
   function isFunction(v) {
@@ -20,6 +44,257 @@
   function isPromise(v) {
     return Object.prototype.toString.call(v) === '[object Promise]';
   }
+
+
+  function arrayRemove(arr, v) {
+    var index;
+    var count = 0;
+
+    while ((index = arr.indexOf(v)) > -1) {
+      arr.splice(index, 1);
+      count++;
+    }
+
+    return count;
+  }
+
+
+  function iterateALL(val) {
+    var opt,
+        i,
+        info,
+        _i7,
+        _Object$keys2,
+        key,
+        _info,
+        _i8,
+        _info2,
+        keys,
+        _i9,
+        _keys2,
+        _key2,
+        _info3,
+        _args = arguments;
+
+    return regeneratorRuntime.wrap(function iterateALL$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            opt = _args.length > 1 && _args[1] !== undefined ? _args[1] : {};
+
+            if (opt.reverse) {
+              _context.next = 30;
+              break;
+            }
+
+            if (!(val.length != null)) {
+              _context.next = 14;
+              break;
+            }
+
+            i = 0;
+
+          case 4:
+            if (!(i < val.length)) {
+              _context.next = 12;
+              break;
+            }
+
+            info = {
+              value: val[i],
+              index: i
+            };
+
+            if (!(!opt.exclude || !opt.exclude(info))) {
+              _context.next = 9;
+              break;
+            }
+
+            _context.next = 9;
+            return info;
+
+          case 9:
+            i++;
+            _context.next = 4;
+            break;
+
+          case 12:
+            _context.next = 28;
+            break;
+
+          case 14:
+            if (!isObject(val)) {
+              _context.next = 27;
+              break;
+            }
+
+            _i7 = 0, _Object$keys2 = Object.keys(val);
+
+          case 16:
+            if (!(_i7 < _Object$keys2.length)) {
+              _context.next = 25;
+              break;
+            }
+
+            key = _Object$keys2[_i7];
+            _info = {
+              value: val[key],
+              key: key
+            };
+
+            if (!(!opt.exclude || !opt.exclude(_info))) {
+              _context.next = 22;
+              break;
+            }
+
+            _context.next = 22;
+            return _info;
+
+          case 22:
+            _i7++;
+            _context.next = 16;
+            break;
+
+          case 25:
+            _context.next = 28;
+            break;
+
+          case 27:
+            throw 'Unsupported type';
+
+          case 28:
+            _context.next = 58;
+            break;
+
+          case 30:
+            if (!(val.length != null)) {
+              _context.next = 42;
+              break;
+            }
+
+            _i8 = val.length - 1;
+
+          case 32:
+            if (!(_i8 >= 0)) {
+              _context.next = 40;
+              break;
+            }
+
+            _info2 = {
+              value: val[_i8],
+              index: _i8
+            };
+
+            if (!(!opt.exclude || !opt.exclude(_info2))) {
+              _context.next = 37;
+              break;
+            }
+
+            _context.next = 37;
+            return _info2;
+
+          case 37:
+            _i8--;
+            _context.next = 32;
+            break;
+
+          case 40:
+            _context.next = 58;
+            break;
+
+          case 42:
+            if (!isObject(val)) {
+              _context.next = 57;
+              break;
+            }
+
+            keys = Object.keys(val);
+            keys.reverse();
+            _i9 = 0, _keys2 = keys;
+
+          case 46:
+            if (!(_i9 < _keys2.length)) {
+              _context.next = 55;
+              break;
+            }
+
+            _key2 = _keys2[_i9];
+            _info3 = {
+              value: val[_key2],
+              key: _key2
+            };
+
+            if (!(!opt.exclude || !opt.exclude(_info3))) {
+              _context.next = 52;
+              break;
+            }
+
+            _context.next = 52;
+            return _info3;
+
+          case 52:
+            _i9++;
+            _context.next = 46;
+            break;
+
+          case 55:
+            _context.next = 58;
+            break;
+
+          case 57:
+            throw 'Unsupported type';
+
+          case 58:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _marked);
+  } // source: http://stackoverflow.com/questions/8817394/javascript-get-deep-value-from-object-by-passing-path-to-it-as-string
+
+
+  function joinFunctionsByNext(funcs) {
+    var next = function next() {};
+
+    var _iteratorNormalCompletion5 = true;
+    var _didIteratorError5 = false;
+    var _iteratorError5 = undefined;
+
+    try {
+      for (var _iterator5 = iterateALL(funcs, {
+        reverse: true
+      })[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+        var func = _step5.value.value;
+        var currentNext = next;
+        next = wrapFuncWithNext(func, currentNext);
+      }
+    } catch (err) {
+      _didIteratorError5 = true;
+      _iteratorError5 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion5 && _iterator5["return"] != null) {
+          _iterator5["return"]();
+        }
+      } finally {
+        if (_didIteratorError5) {
+          throw _iteratorError5;
+        }
+      }
+    }
+
+    return next;
+
+    function wrapFuncWithNext(func, next) {
+      return function () {
+        for (var _len5 = arguments.length, args = new Array(_len5), _key7 = 0; _key7 < _len5; _key7++) {
+          args[_key7] = arguments[_key7];
+        }
+
+        return func.apply(void 0, [next].concat(args));
+      };
+    }
+  } // promise
 
 
   function onDOM(el, name, handler) {
@@ -50,15 +325,15 @@
     }
   }
 
-  var _marked =
+  var _marked$1 =
   /*#__PURE__*/
   regeneratorRuntime.mark(iterateObjectWithoutDollarDash);
   /**
    * [updatablePropsEvenUnbound description]
-   * @param  {[type]} props [un-circular object or getter]
+   * @param  {[type]} props [object or getter]
    * @return {[type]}       [description]
    * props eg: {
-      value: {localName: 'current'},
+      value: {$localName: 'current', $localSetter: (value, vm)},
     }
      default localName is `localProps_${name}`
    */
@@ -66,112 +341,86 @@
   function updatablePropsEvenUnbound(props) {
     if (isFunction(props)) {
       props = props();
-    } else if (isArray(props)) {
-      props = props.slice();
     } else {
       // object
       props = Object.assign({}, props);
     }
 
+    var standardProps = {}; // without key starts with `$`
+
+    var _loop = function _loop(name) {
+      var prop = props[name]; // complete 补全选项
+
+      if (!prop.$localName) {
+        prop.$localName = "localProps_".concat(name);
+      }
+
+      if (!prop.$localSetter) {
+        prop.$localSetter = function (value) {
+          return value;
+        };
+      } // make standardProp
+
+
+      var standardProp = {};
+      standardProps[name] = standardProp;
+      Object.keys(props[name]).forEach(function (key) {
+        if (key[0] !== '$') {
+          standardProp[key] = prop[key];
+        }
+      });
+    };
+
+    for (var name in props) {
+      _loop(name);
+    }
+
     var component = {
-      props: props,
+      props: standardProps,
       computed: {},
       watch: {}
     };
-    var propNames;
-    var localNames = {};
-
-    if (isArray(props)) {
-      propNames = props;
-    } else {
-      propNames = [];
-
-      for (var key in props) {
-        propNames.push(key);
-
-        if (props[key].localName) {
-          localNames[key] = props[key].localName;
-          delete props[key].localName;
-        }
-      }
-    }
 
     component.data = function () {
       var t = {
         localValueOfUpdatableProps: {}
       };
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
 
-      try {
-        for (var _iterator = propNames[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var name = _step.value;
-          t.localValueOfUpdatableProps[name] = this[name];
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-            _iterator["return"]();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
+      for (var _i = 0, _Object$keys = Object.keys(props); _i < _Object$keys.length; _i++) {
+        var _name = _Object$keys[_i];
+        t.localValueOfUpdatableProps[_name] = this[_name];
       }
 
       return t;
     };
 
-    var _iteratorNormalCompletion2 = true;
-    var _didIteratorError2 = false;
-    var _iteratorError2 = undefined;
+    var _loop2 = function _loop2() {
+      var name = _Object$keys2[_i2];
+      var prop = props[name];
 
-    try {
-      var _loop = function _loop() {
-        var name = _step2.value;
-
-        component.watch[name] = function (value) {
-          this.localValueOfUpdatableProps[name] = value;
-        };
-
-        var localName = localNames[name] || "localProps_".concat(name);
-        component.computed[localName] = {
-          get: function get() {
-            return this.localValueOfUpdatableProps[name];
-          },
-          set: function set(value) {
-            if (name === 'value') {
-              this.$emit('input', value);
-            } else {
-              this.$emit("update:".concat(name), value);
-            }
-
-            this.localValueOfUpdatableProps[name] = value;
-          }
-        };
+      component.watch[name] = function (value) {
+        this.localValueOfUpdatableProps[name] = prop.$localSetter(value, this);
       };
 
-      for (var _iterator2 = propNames[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-        _loop();
-      }
-    } catch (err) {
-      _didIteratorError2 = true;
-      _iteratorError2 = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
-          _iterator2["return"]();
+      var localName = prop.$localName;
+      component.computed[localName] = {
+        get: function get() {
+          return this.localValueOfUpdatableProps[name];
+        },
+        set: function set(value) {
+          if (name === 'value') {
+            this.$emit('input', value);
+          } else {
+            this.$emit("update:".concat(name), value);
+          }
+
+          this.localValueOfUpdatableProps[name] = prop.$localSetter(value, this);
         }
-      } finally {
-        if (_didIteratorError2) {
-          throw _iteratorError2;
-        }
-      }
+      };
+    };
+
+    for (var _i2 = 0, _Object$keys2 = Object.keys(props); _i2 < _Object$keys2.length; _i2++) {
+      _loop2();
     }
 
     return component;
@@ -301,7 +550,7 @@
             return _context.stop();
         }
       }
-    }, _marked);
+    }, _marked$1);
   } // add reactive `windowSize`
 
   var windowSize = {
@@ -379,8 +628,60 @@
       window.removeEventListener("beforeunload", beforeunload);
     };
   }
+  var hookHelper = {
+    methods: {
+      // todo extract hooks to vue-functions
+      // get hooks in this._hooks, without which in props
+      _getNonPropHooksByName: function _getNonPropHooksByName(name) {
+        if (this._hooks) {
+          return this._hooks[name];
+        }
+      },
+      addHook: function addHook(name, func) {
+        if (!this._getNonPropHooksByName(name)) {
+          if (!this._hooks) {
+            this._hooks = {};
+          }
+
+          if (!this._hooks[name]) {
+            this._hooks[name] = [];
+          }
+        }
+
+        this._hooks[name].push(func);
+      },
+      removeHook: function removeHook(name, func) {
+        var hooks = this._getNonPropHooksByName(name);
+
+        if (hooks) {
+          arrayRemove(hooks, func);
+        }
+      },
+      hasHook: function hasHook(name) {
+        return this._getNonPropHooksByName(name) || this[name];
+      },
+      executeHook: function executeHook(name, args) {
+        var hooks = this._getNonPropHooksByName(name).slice();
+
+        if (hooks) {
+          if (this[name] && isFunction(this[name])) {
+            hooks.push(function (next) {
+              for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+                args[_key - 1] = arguments[_key];
+              }
+
+              return this[name].apply(this, args);
+            });
+          }
+
+          return joinFunctionsByNext(hooks).apply(void 0, _toConsumableArray(args));
+        }
+      }
+    }
+  };
 
   exports.doWatch = doWatch;
+  exports.hookHelper = hookHelper;
   exports.isPropTrue = isPropTrue;
   exports.iterateObjectWithoutDollarDash = iterateObjectWithoutDollarDash;
   exports.registerPreventURLChange = registerPreventURLChange;
