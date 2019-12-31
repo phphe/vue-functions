@@ -56,3 +56,14 @@ windowSize: {
 
 ### registerPreventURLChange(Vue, router, msg)
 Attach `$preventURLChange` and `$allowURLChange` to vm.
+
+### hookHelper
+Vue component, extend or mixin it to use. Help to extend hook.
+```js
+methods: {
+  addHook(name, func),
+  removeHook(name, func),
+  hasHook(name),
+  executeHook(name, args)
+}
+```

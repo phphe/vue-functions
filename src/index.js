@@ -219,3 +219,45 @@ If you leave before saving, your changes will be lost.`
     window.removeEventListener("beforeunload", beforeunload)
   }
 }
+export const hookHelper = {
+  methods: {
+    // todo extract hooks to vue-functions
+    // get hooks in this._hooks, without which in props
+    _getNonPropHooksByName(name) {
+      if (this._hooks) {
+        return this._hooks[name]
+      }
+    },
+    addHook(name, func) {
+      if (!this._getNonPropHooksByName(name)) {
+        if (!this._hooks) {
+          this._hooks = {}
+        }
+        if (!this._hooks[name]) {
+          this._hooks[name] = []
+        }
+      }
+      this._hooks[name].push(func)
+    },
+    removeHook(name, func) {
+      const hooks = this._getNonPropHooksByName(name)
+      if (hooks) {
+        hp.arrayRemove(hooks, func)
+      }
+    },
+    hasHook(name) {
+      return this._getNonPropHooksByName(name) || this[name]
+    },
+    executeHook(name, args) {
+      const hooks = this._getNonPropHooksByName(name).slice()
+      if (hooks) {
+        if (this[name] && hp.isFunction(this[name])) {
+          hooks.push(function (next, ...args) {
+            return this[name](...args)
+          })
+        }
+        return hp.joinFunctionsByNext(hooks)(...args)
+      }
+    },
+  }
+}
