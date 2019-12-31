@@ -2,55 +2,59 @@ import * as hp from 'helper-js'
 
 /**
  * [updatablePropsEvenUnbound description]
- * @param  {[type]} props [un-circular object or getter]
+ * @param  {[type]} props [object or getter]
  * @return {[type]}       [description]
  * props eg: {
-    value: {localName: 'current'},
+    value: {$localName: 'current', $localSetter: (value, vm)},
   }
    default localName is `localProps_${name}`
  */
 export function updatablePropsEvenUnbound(props) {
   if (hp.isFunction(props)) {
     props = props()
-  } else if(hp.isArray(props)) {
-    props = props.slice()
   } else {
     // object
     props = Object.assign({}, props)
   }
+  const standardProps = {} // without key starts with `$`
+  for (const name in props) {
+    const prop = props[name]
+    // complete 补全选项
+    if (!prop.$localName) {
+      prop.$localName = `localProps_${name}`
+    }
+    if (!prop.$localSetter) {
+      prop.$localSetter = value => value
+    }
+    // make standardProp
+    const standardProp = {}
+    standardProps[name] = standardProp
+    Object.keys(props[name]).forEach(key => {
+      if (key[0] !== '$') {
+        standardProp[key] = prop[key]
+      }
+    })
+  }
   const component = {
-    props,
+    props: standardProps,
     computed: {},
     watch: {},
-  }
-  let propNames
-  const localNames = {}
-  if (hp.isArray(props)) {
-    propNames = props
-  } else {
-    propNames = []
-    for (const key in props) {
-      propNames.push(key)
-      if (props[key].localName) {
-        localNames[key] = props[key].localName
-        delete props[key].localName
-      }
-    }
   }
   component.data = function () {
     const t = {
       localValueOfUpdatableProps: {},
     }
-    for (const name of propNames) {
+    for (const name of Object.keys(props)) {
       t.localValueOfUpdatableProps[name] = this[name]
     }
     return t
   }
-  for (const name of propNames) {
+  for (const name of Object.keys(props)) {
+    const prop = props[name]
     component.watch[name] = function (value) {
-      this.localValueOfUpdatableProps[name] = value
+      this.localValueOfUpdatableProps[name] = prop.$localSetter(value, this)
     }
-    const localName = localNames[name] || `localProps_${name}`
+    const localName = prop.$localName
     component.computed[localName] = {
       get(){ return this.localValueOfUpdatableProps[name] },
       set(value) {
@@ -59,7 +63,7 @@ export function updatablePropsEvenUnbound(props) {
         } else {
           this.$emit(`update:${name}`, value)
         }
-        this.localValueOfUpdatableProps[name] = value
+        this.localValueOfUpdatableProps[name] = prop.$localSetter(value, this)
       },
     }
   }
