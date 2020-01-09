@@ -1,5 +1,5 @@
 /*!
- * vue-functions v2.0.1
+ * vue-functions v2.0.2
  * (c) phphe <phphe@outlook.com> (https://github.com/phphe)
  * Released under the MIT License.
  */

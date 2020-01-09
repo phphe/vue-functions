@@ -1,6 +1,6 @@
 {
   "name": "vue-functions",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "",
   "main": "dist/vue-functions.cjs.js",
   "module": "dist/vue-functions.esm.js",
@@ -8,10 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "node scripts/build.js",
-    "dev": "rollup -w -c scripts/config.js --environment TARGET:umd",
-    "build:esm": "rollup -c scripts/config.js --environment TARGET:esm",
-    "dev:esm": "rollup -w -c scripts/config.js --environment TARGET:esm"
+    "build": "rogo"
   },
   "author": "phphe <phphe@outlook.com> (https://github.com/phphe)",
   "unpkg": "dist/vue-functions.js",
@@ -23,11 +20,11 @@
     "url": "https://github.com/phphe/vue-functions.git"
   },
   "devDependencies": {
-    "rollup-helper": "^2.0.12"
+    "rogo": "^1.0.0"
   },
   "dependencies": {
     "@babel/runtime": "^7.7.7",
-    "helper-js": "^1.4.21"
+    "helper-js": "^1.4.27"
   },
   "license": "MIT"
 }
