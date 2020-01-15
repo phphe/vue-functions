@@ -249,15 +249,14 @@ export const hookHelper = {
       return this._getNonPropHooksByName(name) || this[name]
     },
     executeHook(name, args) {
-      const hooks = this._getNonPropHooksByName(name).slice()
-      if (hooks) {
-        if (this[name] && hp.isFunction(this[name])) {
-          hooks.push(function (next, ...args) {
-            return this[name](...args)
-          })
-        }
-        return hp.joinFunctionsByNext(hooks)(...args)
+      let hooks = this._getNonPropHooksByName(name)
+      hooks = hooks ? hooks.slice() : []
+      if (this[name] && hp.isFunction(this[name])) {
+        hooks.push((next, ...args) => {
+          return this[name](...args)
+        })
       }
+      return hp.joinFunctionsByNext(hooks)(...args)
     },
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "vue-functions",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "",
   "main": "dist/vue-functions.cjs.js",
   "module": "dist/vue-functions.esm.js",
