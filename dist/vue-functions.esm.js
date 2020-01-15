@@ -1,5 +1,5 @@
 /*!
- * vue-functions v2.0.2
+ * vue-functions v2.0.3
  * (c) phphe <phphe@outlook.com> (https://github.com/phphe)
  * Released under the MIT License.
  */
@@ -309,21 +309,23 @@ var hookHelper = {
     },
 
     executeHook(name, args) {
-      var hooks = this._getNonPropHooksByName(name).slice();
+      var _this = this;
 
-      if (hooks) {
-        if (this[name] && isFunction(this[name])) {
-          hooks.push(function (next) {
-            for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-              args[_key - 1] = arguments[_key];
-            }
+      var hooks = this._getNonPropHooksByName(name);
 
-            return this[name](...args);
-          });
-        }
+      hooks = hooks ? hooks.slice() : [];
 
-        return joinFunctionsByNext(hooks)(...args);
+      if (this[name] && isFunction(this[name])) {
+        hooks.push(function (next) {
+          for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+            args[_key - 1] = arguments[_key];
+          }
+
+          return _this[name](...args);
+        });
       }
+
+      return joinFunctionsByNext(hooks)(...args);
     }
 
   }
