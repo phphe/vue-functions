@@ -260,3 +260,16 @@ export const hookHelper = {
     },
   }
 }
+
+export const mountedMixin = {
+  data() {
+    return {
+      mounted: new Promise((resolve, reject) => {
+        this._mounted_resolve = resolve
+      }),
+    }
+  },
+  mounted() {
+    this._mounted_resolve()
+  },
+}

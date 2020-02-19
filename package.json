@@ -1,6 +1,6 @@
 {
   "name": "vue-functions",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "",
   "main": "dist/vue-functions.cjs.js",
   "module": "dist/vue-functions.esm.js",
@@ -20,11 +20,11 @@
     "url": "https://github.com/phphe/vue-functions.git"
   },
   "devDependencies": {
-    "rogo": "^1.0.0"
+    "rogo": "^1.0.4"
   },
   "dependencies": {
     "@babel/runtime": "^7.7.7",
-    "helper-js": "^1.4.27"
+    "helper-js": "^1.4.33"
   },
   "license": "MIT"
 }

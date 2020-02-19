@@ -1,5 +1,5 @@
 /*!
- * vue-functions v2.0.3
+ * vue-functions v2.0.4
  * (c) phphe <phphe@outlook.com> (https://github.com/phphe)
  * Released under the MIT License.
  */
@@ -775,6 +775,8 @@
 
   var _typeof_1 = createCommonjsModule(function (module) {
   function _typeof(obj) {
+    "@babel/helpers - typeof";
+
     if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
       module.exports = _typeof = function _typeof(obj) {
         return typeof obj;
@@ -850,9 +852,11 @@
   module.exports = _setPrototypeOf;
   });
 
+  var regenerator$1 = runtime_1;
+
   var _marked =
   /*#__PURE__*/
-  regenerator.mark(iterateAll);
+  regenerator$1.mark(iterateAll);
 
   function isObject(v) {
     return Object.prototype.toString.call(v) === '[object Object]';
@@ -884,20 +888,20 @@
     var opt,
         i,
         info,
-        _i8,
+        _i10,
         _Object$keys2,
         key,
         _info,
         _i5,
         _info2,
         keys,
-        _i9,
+        _i11,
         _keys2,
         _key2,
         _info3,
         _args = arguments;
 
-    return regenerator.wrap(function iterateAll$(_context) {
+    return regenerator$1.wrap(function iterateAll$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
@@ -949,15 +953,15 @@
               break;
             }
 
-            _i8 = 0, _Object$keys2 = Object.keys(val);
+            _i10 = 0, _Object$keys2 = Object.keys(val);
 
           case 16:
-            if (!(_i8 < _Object$keys2.length)) {
+            if (!(_i10 < _Object$keys2.length)) {
               _context.next = 25;
               break;
             }
 
-            key = _Object$keys2[_i8];
+            key = _Object$keys2[_i10];
             _info = {
               value: val[key],
               key: key
@@ -972,7 +976,7 @@
             return _info;
 
           case 22:
-            _i8++;
+            _i10++;
             _context.next = 16;
             break;
 
@@ -1031,15 +1035,15 @@
 
             keys = Object.keys(val);
             keys.reverse();
-            _i9 = 0, _keys2 = keys;
+            _i11 = 0, _keys2 = keys;
 
           case 46:
-            if (!(_i9 < _keys2.length)) {
+            if (!(_i11 < _keys2.length)) {
               _context.next = 55;
               break;
             }
 
-            _key2 = _keys2[_i9];
+            _key2 = _keys2[_i11];
             _info3 = {
               value: val[_key2],
               key: _key2
@@ -1054,7 +1058,7 @@
             return _info3;
 
           case 52:
-            _i9++;
+            _i11++;
             _context.next = 46;
             break;
 
@@ -1502,11 +1506,26 @@
       }
     }
   };
+  var mountedMixin = {
+    data: function data() {
+      var _this3 = this;
+
+      return {
+        mounted: new Promise(function (resolve, reject) {
+          _this3._mounted_resolve = resolve;
+        })
+      };
+    },
+    mounted: function mounted() {
+      this._mounted_resolve();
+    }
+  };
 
   exports.doWatch = doWatch;
   exports.hookHelper = hookHelper;
   exports.isPropTrue = isPropTrue;
   exports.iterateObjectWithoutDollarDash = iterateObjectWithoutDollarDash;
+  exports.mountedMixin = mountedMixin;
   exports.registerPreventURLChange = registerPreventURLChange;
   exports.updatablePropsEvenUnbound = updatablePropsEvenUnbound;
   exports.watchAsync = watchAsync;

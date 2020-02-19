@@ -1,5 +1,5 @@
 /*!
- * vue-functions v2.0.3
+ * vue-functions v2.0.4
  * (c) phphe <phphe@outlook.com> (https://github.com/phphe)
  * Released under the MIT License.
  */
@@ -334,11 +334,26 @@ var hookHelper = {
 
   }
 };
+var mountedMixin = {
+  data() {
+    return {
+      mounted: new Promise((resolve, reject) => {
+        this._mounted_resolve = resolve;
+      })
+    };
+  },
+
+  mounted() {
+    this._mounted_resolve();
+  }
+
+};
 
 exports.doWatch = doWatch;
 exports.hookHelper = hookHelper;
 exports.isPropTrue = isPropTrue;
 exports.iterateObjectWithoutDollarDash = iterateObjectWithoutDollarDash;
+exports.mountedMixin = mountedMixin;
 exports.registerPreventURLChange = registerPreventURLChange;
 exports.updatablePropsEvenUnbound = updatablePropsEvenUnbound;
 exports.watchAsync = watchAsync;
