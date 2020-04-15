@@ -1,14 +1,20 @@
 /*!
- * vue-functions v2.0.4
+ * vue-functions v2.0.5
  * (c) phphe <phphe@outlook.com> (https://github.com/phphe)
+ * Homepage: undefined
  * Released under the MIT License.
  */
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+var _toConsumableArray = _interopDefault(require('@babel/runtime/helpers/toConsumableArray'));
+var _regeneratorRuntime = _interopDefault(require('@babel/runtime/regenerator'));
 var hp = require('helper-js');
 
+var _marked = /*#__PURE__*/_regeneratorRuntime.mark(iterateObjectWithoutDollarDash);
 /**
  * [updatablePropsEvenUnbound description]
  * @param  {[type]} props [object or getter]
@@ -37,13 +43,15 @@ function updatablePropsEvenUnbound(props) {
     }
 
     if (!prop.$localSetter) {
-      prop.$localSetter = value => value;
+      prop.$localSetter = function (value) {
+        return value;
+      };
     } // make standardProp
 
 
     var standardProp = {};
     standardProps[name] = standardProp;
-    Object.keys(props[name]).forEach(key => {
+    Object.keys(props[name]).forEach(function (key) {
       if (key[0] !== '$') {
         standardProp[key] = prop[key];
       }
@@ -65,41 +73,41 @@ function updatablePropsEvenUnbound(props) {
       localValueOfUpdatableProps: {}
     };
 
-    for (var _name of Object.keys(props)) {
+    for (var _i = 0, _Object$keys = Object.keys(props); _i < _Object$keys.length; _i++) {
+      var _name = _Object$keys[_i];
       t.localValueOfUpdatableProps[_name] = this[_name];
     }
 
     return t;
   };
 
-  var _loop2 = function _loop2(_name2) {
-    var prop = props[_name2];
+  var _loop2 = function _loop2() {
+    var name = _Object$keys2[_i2];
+    var prop = props[name];
 
-    component.watch[_name2] = function (value) {
-      this.localValueOfUpdatableProps[_name2] = prop.$localSetter(value, this);
+    component.watch[name] = function (value) {
+      this.localValueOfUpdatableProps[name] = prop.$localSetter(value, this);
     };
 
     var localName = prop.$localName;
     component.computed[localName] = {
-      get() {
-        return this.localValueOfUpdatableProps[_name2];
+      get: function get() {
+        return this.localValueOfUpdatableProps[name];
       },
-
-      set(value) {
-        if (_name2 === 'value') {
+      set: function set(value) {
+        if (name === 'value') {
           this.$emit('input', value);
         } else {
-          this.$emit("update:".concat(_name2), value);
+          this.$emit("update:".concat(name), value);
         }
 
-        this.localValueOfUpdatableProps[_name2] = prop.$localSetter(value, this);
+        this.localValueOfUpdatableProps[name] = prop.$localSetter(value, this);
       }
-
     };
   };
 
-  for (var _name2 of Object.keys(props)) {
-    _loop2(_name2);
+  for (var _i2 = 0, _Object$keys2 = Object.keys(props); _i2 < _Object$keys2.length; _i2++) {
+    _loop2();
   }
 
   return component;
@@ -117,14 +125,18 @@ function watchAsync(vm, getter, handler, opt) {
   return destroy;
 
   function destroy() {
-    destroies.forEach(f => f());
+    destroies.forEach(function (f) {
+      return f();
+    });
     destroies = [];
   }
 
   function exec(getter, opt) {
     var value;
     var first = true;
-    var unwatch = vm.$watch(() => getter.call(vm, exec), value2 => {
+    var unwatch = vm.$watch(function () {
+      return getter.call(vm, exec);
+    }, function (value2) {
       value = value2;
 
       if (first) {
@@ -147,7 +159,7 @@ function watchAsync(vm, getter, handler, opt) {
     var localCount = count;
     oldValue = value;
 
-    var getterExecuted = value => {
+    var getterExecuted = function getterExecuted(value) {
       if (localCount !== count) {
         // expired
         return;
@@ -174,9 +186,9 @@ function watchAsync(vm, getter, handler, opt) {
 function doWatch(vm, handler) {
   var oldValue, unwatch;
 
-  var update = () => {
+  var update = function update() {
     var getter = handler.call(vm, oldValue);
-    unwatch = vm.$watch(getter, value => {
+    unwatch = vm.$watch(getter, function (value) {
       unwatch();
       oldValue = value;
       update();
@@ -184,23 +196,52 @@ function doWatch(vm, handler) {
   };
 
   update();
-  return () => unwatch && unwatch();
+  return function () {
+    return unwatch && unwatch();
+  };
 }
-function* iterateObjectWithoutDollarDash(obj) {
-  for (var key in obj) {
-    var start = key.substr(0, 1);
+function iterateObjectWithoutDollarDash(obj) {
+  var key, start;
+  return _regeneratorRuntime.wrap(function iterateObjectWithoutDollarDash$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          _context.t0 = _regeneratorRuntime.keys(obj);
 
-    if (start !== '$' && start !== '_') {
-      yield {
-        key,
-        value: obj[key]
-      };
+        case 1:
+          if ((_context.t1 = _context.t0()).done) {
+            _context.next = 9;
+            break;
+          }
+
+          key = _context.t1.value;
+          start = key.substr(0, 1);
+
+          if (!(start !== '$' && start !== '_')) {
+            _context.next = 7;
+            break;
+          }
+
+          _context.next = 7;
+          return {
+            key: key,
+            value: obj[key]
+          };
+
+        case 7:
+          _context.next = 1;
+          break;
+
+        case 9:
+        case "end":
+          return _context.stop();
+      }
     }
-  }
+  }, _marked);
 } // add reactive `windowSize`
 
 var windowSize = {
-  data() {
+  data: function data() {
     return {
       windowSize: {
         innerWidth: window.innerWidth,
@@ -210,9 +251,8 @@ var windowSize = {
       }
     };
   },
-
   methods: {
-    updateWindowSize() {
+    updateWindowSize: function updateWindowSize() {
       Object.assign(this.windowSize, {
         innerWidth: window.innerWidth,
         innerHeight: window.innerHeight,
@@ -220,27 +260,26 @@ var windowSize = {
         outerHeight: window.outerHeight
       });
     }
-
   },
+  created: function created() {
+    var _this = this;
 
-  created() {
-    this._windowSize_onresize = () => {
-      this.updateWindowSize();
-      this.$emit('window-resize');
+    this._windowSize_onresize = function () {
+      _this.updateWindowSize();
+
+      _this.$emit('window-resize');
     };
 
     hp.onDOM(window, 'resize', this._windowSize_onresize);
   },
-
-  beforeDestroy() {
+  beforeDestroy: function beforeDestroy() {
     hp.offDOM(window, 'resize', this._windowSize_onresize);
   }
-
 };
 function registerPreventURLChange(Vue, router, msg) {
   var preventRouter = false;
   var msg0 = "It looks like you have been editing something.\nIf you leave before saving, your changes will be lost.";
-  router.beforeEach((to, from, next) => {
+  router.beforeEach(function (to, from, next) {
     if (preventRouter) {
       if (window.confirm(msg || msg0)) {
         Vue.allowURLChange();
@@ -253,14 +292,14 @@ function registerPreventURLChange(Vue, router, msg) {
     }
   });
 
-  var beforeunload = e => {
+  var beforeunload = function beforeunload(e) {
     var confirmationMessage = msg || msg0;
     e.returnValue = confirmationMessage; // Gecko, Trident, Chrome 34+
 
     return confirmationMessage; // Gecko, WebKit, Chrome <34
   };
 
-  Vue.preventURLChange = Vue.prototype.$preventURLChange = msg2 => {
+  Vue.preventURLChange = Vue.prototype.$preventURLChange = function (msg2) {
     if (msg2 != null) {
       msg = msg2;
     }
@@ -271,7 +310,7 @@ function registerPreventURLChange(Vue, router, msg) {
     }
   };
 
-  Vue.allowURLChange = Vue.prototype.$allowURLChange = () => {
+  Vue.allowURLChange = Vue.prototype.$allowURLChange = function () {
     preventRouter = false;
     window.removeEventListener("beforeunload", beforeunload);
   };
@@ -280,13 +319,12 @@ var hookHelper = {
   methods: {
     // todo extract hooks to vue-functions
     // get hooks in this._hooks, without which in props
-    _getNonPropHooksByName(name) {
+    _getNonPropHooksByName: function _getNonPropHooksByName(name) {
       if (this._hooks) {
         return this._hooks[name];
       }
     },
-
-    addHook(name, func) {
+    addHook: function addHook(name, func) {
       if (!this._getNonPropHooksByName(name)) {
         if (!this._hooks) {
           this._hooks = {};
@@ -299,21 +337,18 @@ var hookHelper = {
 
       this._hooks[name].push(func);
     },
-
-    removeHook(name, func) {
+    removeHook: function removeHook(name, func) {
       var hooks = this._getNonPropHooksByName(name);
 
       if (hooks) {
         hp.arrayRemove(hooks, func);
       }
     },
-
-    hasHook(name) {
+    hasHook: function hasHook(name) {
       return this._getNonPropHooksByName(name) || this[name];
     },
-
-    executeHook(name, args) {
-      var _this = this;
+    executeHook: function executeHook(name, args) {
+      var _this2 = this;
 
       var hooks = this._getNonPropHooksByName(name);
 
@@ -325,28 +360,27 @@ var hookHelper = {
             args[_key - 1] = arguments[_key];
           }
 
-          return _this[name](...args);
+          return _this2[name].apply(_this2, args);
         });
       }
 
-      return hp.joinFunctionsByNext(hooks)(...args);
+      return hp.joinFunctionsByNext(hooks).apply(void 0, _toConsumableArray(args));
     }
-
   }
 };
 var mountedMixin = {
-  data() {
+  data: function data() {
+    var _this3 = this;
+
     return {
-      mounted: new Promise((resolve, reject) => {
-        this._mounted_resolve = resolve;
+      mounted: new Promise(function (resolve, reject) {
+        _this3._mounted_resolve = resolve;
       })
     };
   },
-
-  mounted() {
+  mounted: function mounted() {
     this._mounted_resolve();
   }
-
 };
 
 exports.doWatch = doWatch;

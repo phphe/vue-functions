@@ -1,6 +1,7 @@
 /*!
- * vue-functions v2.0.4
+ * vue-functions v2.0.5
  * (c) phphe <phphe@outlook.com> (https://github.com/phphe)
+ * Homepage: undefined
  * Released under the MIT License.
  */
 (function (global, factory) {
@@ -9,32 +10,49 @@
   (global = global || self, factory(global.vueFunctions = {}));
 }(this, (function (exports) { 'use strict';
 
-  function _arrayWithoutHoles(arr) {
-    if (Array.isArray(arr)) {
-      for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-        arr2[i] = arr[i];
-      }
+  function _arrayLikeToArray(arr, len) {
+    if (len == null || len > arr.length) len = arr.length;
 
-      return arr2;
+    for (var i = 0, arr2 = new Array(len); i < len; i++) {
+      arr2[i] = arr[i];
     }
+
+    return arr2;
+  }
+
+  var arrayLikeToArray = _arrayLikeToArray;
+
+  function _arrayWithoutHoles(arr) {
+    if (Array.isArray(arr)) return arrayLikeToArray(arr);
   }
 
   var arrayWithoutHoles = _arrayWithoutHoles;
 
   function _iterableToArray(iter) {
-    if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+    if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
   }
 
   var iterableToArray = _iterableToArray;
 
+  function _unsupportedIterableToArray(o, minLen) {
+    if (!o) return;
+    if (typeof o === "string") return arrayLikeToArray(o, minLen);
+    var n = Object.prototype.toString.call(o).slice(8, -1);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(n);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return arrayLikeToArray(o, minLen);
+  }
+
+  var unsupportedIterableToArray = _unsupportedIterableToArray;
+
   function _nonIterableSpread() {
-    throw new TypeError("Invalid attempt to spread non-iterable instance");
+    throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
 
   var nonIterableSpread = _nonIterableSpread;
 
   function _toConsumableArray(arr) {
-    return arrayWithoutHoles(arr) || iterableToArray(arr) || nonIterableSpread();
+    return arrayWithoutHoles(arr) || iterableToArray(arr) || unsupportedIterableToArray(arr) || nonIterableSpread();
   }
 
   var toConsumableArray = _toConsumableArray;
@@ -175,7 +193,7 @@
       return { __await: arg };
     };
 
-    function AsyncIterator(generator) {
+    function AsyncIterator(generator, PromiseImpl) {
       function invoke(method, arg, resolve, reject) {
         var record = tryCatch(generator[method], generator, arg);
         if (record.type === "throw") {
@@ -186,14 +204,14 @@
           if (value &&
               typeof value === "object" &&
               hasOwn.call(value, "__await")) {
-            return Promise.resolve(value.__await).then(function(value) {
+            return PromiseImpl.resolve(value.__await).then(function(value) {
               invoke("next", value, resolve, reject);
             }, function(err) {
               invoke("throw", err, resolve, reject);
             });
           }
 
-          return Promise.resolve(value).then(function(unwrapped) {
+          return PromiseImpl.resolve(value).then(function(unwrapped) {
             // When a yielded Promise is resolved, its final value becomes
             // the .value of the Promise<{value,done}> result for the
             // current iteration.
@@ -211,7 +229,7 @@
 
       function enqueue(method, arg) {
         function callInvokeWithMethodAndArg() {
-          return new Promise(function(resolve, reject) {
+          return new PromiseImpl(function(resolve, reject) {
             invoke(method, arg, resolve, reject);
           });
         }
@@ -251,9 +269,12 @@
     // Note that simple async functions are implemented on top of
     // AsyncIterator objects; they just return a Promise for the value of
     // the final result produced by the iterator.
-    exports.async = function(innerFn, outerFn, self, tryLocsList) {
+    exports.async = function(innerFn, outerFn, self, tryLocsList, PromiseImpl) {
+      if (PromiseImpl === void 0) PromiseImpl = Promise;
+
       var iter = new AsyncIterator(
-        wrap(innerFn, outerFn, self, tryLocsList)
+        wrap(innerFn, outerFn, self, tryLocsList),
+        PromiseImpl
       );
 
       return exports.isGeneratorFunction(outerFn)
@@ -773,26 +794,6 @@
 
   var regenerator = runtime_1;
 
-  var _typeof_1 = createCommonjsModule(function (module) {
-  function _typeof(obj) {
-    "@babel/helpers - typeof";
-
-    if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-      module.exports = _typeof = function _typeof(obj) {
-        return typeof obj;
-      };
-    } else {
-      module.exports = _typeof = function _typeof(obj) {
-        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-      };
-    }
-
-    return _typeof(obj);
-  }
-
-  module.exports = _typeof;
-  });
-
   var getPrototypeOf = createCommonjsModule(function (module) {
   function _getPrototypeOf(o) {
     module.exports = _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
@@ -852,11 +853,108 @@
   module.exports = _setPrototypeOf;
   });
 
-  var regenerator$1 = runtime_1;
+  var _typeof_1 = createCommonjsModule(function (module) {
+  function _typeof(obj) {
+    "@babel/helpers - typeof";
 
-  var _marked =
-  /*#__PURE__*/
-  regenerator$1.mark(iterateAll);
+    if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+      module.exports = _typeof = function _typeof(obj) {
+        return typeof obj;
+      };
+    } else {
+      module.exports = _typeof = function _typeof(obj) {
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+      };
+    }
+
+    return _typeof(obj);
+  }
+
+  module.exports = _typeof;
+  });
+
+  /*!
+   * helper-js v1.4.36
+   * (c) phphe <phphe@outlook.com> (https://github.com/phphe)
+   * Homepage: undefined
+   * Released under the MIT License.
+   */
+
+  var _marked = /*#__PURE__*/regenerator.mark(iterateAll);
+
+  function _createForOfIteratorHelper(o) {
+    if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
+      if (Array.isArray(o) || (o = _unsupportedIterableToArray$1(o))) {
+        var i = 0;
+
+        var F = function F() {};
+
+        return {
+          s: F,
+          n: function n() {
+            if (i >= o.length) return {
+              done: true
+            };
+            return {
+              done: false,
+              value: o[i++]
+            };
+          },
+          e: function e(_e) {
+            throw _e;
+          },
+          f: F
+        };
+      }
+
+      throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+
+    var it,
+        normalCompletion = true,
+        didErr = false,
+        err;
+    return {
+      s: function s() {
+        it = o[Symbol.iterator]();
+      },
+      n: function n() {
+        var step = it.next();
+        normalCompletion = step.done;
+        return step;
+      },
+      e: function e(_e2) {
+        didErr = true;
+        err = _e2;
+      },
+      f: function f() {
+        try {
+          if (!normalCompletion && it.return != null) it.return();
+        } finally {
+          if (didErr) throw err;
+        }
+      }
+    };
+  }
+
+  function _unsupportedIterableToArray$1(o, minLen) {
+    if (!o) return;
+    if (typeof o === "string") return _arrayLikeToArray$1(o, minLen);
+    var n = Object.prototype.toString.call(o).slice(8, -1);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(n);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$1(o, minLen);
+  }
+
+  function _arrayLikeToArray$1(arr, len) {
+    if (len == null || len > arr.length) len = arr.length;
+
+    for (var i = 0, arr2 = new Array(len); i < len; i++) {
+      arr2[i] = arr[i];
+    }
+
+    return arr2;
+  } // local store
 
   function isObject(v) {
     return Object.prototype.toString.call(v) === '[object Object]';
@@ -888,24 +986,24 @@
     var opt,
         i,
         info,
-        _i10,
+        _i7,
         _Object$keys2,
         key,
         _info,
-        _i5,
+        _i8,
         _info2,
         keys,
-        _i11,
+        _i9,
         _keys2,
         _key2,
         _info3,
         _args = arguments;
 
-    return regenerator$1.wrap(function iterateAll$(_context) {
+    return regenerator.wrap(function iterateAll$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            opt = _args.length > 1 && _args[1] !== undefined ? _args[1] : {}; // opt: {reverse, exclude}
+            opt = _args.length > 1 && _args[1] !== undefined ? _args[1] : {};
 
             if (opt.reverse) {
               _context.next = 30;
@@ -953,15 +1051,15 @@
               break;
             }
 
-            _i10 = 0, _Object$keys2 = Object.keys(val);
+            _i7 = 0, _Object$keys2 = Object.keys(val);
 
           case 16:
-            if (!(_i10 < _Object$keys2.length)) {
+            if (!(_i7 < _Object$keys2.length)) {
               _context.next = 25;
               break;
             }
 
-            key = _Object$keys2[_i10];
+            key = _Object$keys2[_i7];
             _info = {
               value: val[key],
               key: key
@@ -976,7 +1074,7 @@
             return _info;
 
           case 22:
-            _i10++;
+            _i7++;
             _context.next = 16;
             break;
 
@@ -997,17 +1095,17 @@
               break;
             }
 
-            _i5 = val.length - 1;
+            _i8 = val.length - 1;
 
           case 32:
-            if (!(_i5 >= 0)) {
+            if (!(_i8 >= 0)) {
               _context.next = 40;
               break;
             }
 
             _info2 = {
-              value: val[_i5],
-              index: _i5
+              value: val[_i8],
+              index: _i8
             };
 
             if (!(!opt.exclude || !opt.exclude(_info2))) {
@@ -1019,7 +1117,7 @@
             return _info2;
 
           case 37:
-            _i5--;
+            _i8--;
             _context.next = 32;
             break;
 
@@ -1035,15 +1133,15 @@
 
             keys = Object.keys(val);
             keys.reverse();
-            _i11 = 0, _keys2 = keys;
+            _i9 = 0, _keys2 = keys;
 
           case 46:
-            if (!(_i11 < _keys2.length)) {
+            if (!(_i9 < _keys2.length)) {
               _context.next = 55;
               break;
             }
 
-            _key2 = _keys2[_i11];
+            _key2 = _keys2[_i9];
             _info3 = {
               value: val[_key2],
               key: _key2
@@ -1058,7 +1156,7 @@
             return _info3;
 
           case 52:
-            _i11++;
+            _i9++;
             _context.next = 46;
             break;
 
@@ -1081,31 +1179,21 @@
   function joinFunctionsByNext(funcs) {
     var next = function next() {};
 
-    var _iteratorNormalCompletion8 = true;
-    var _didIteratorError8 = false;
-    var _iteratorError8 = undefined;
+    var _iterator8 = _createForOfIteratorHelper(iterateAll(funcs, {
+      reverse: true
+    })),
+        _step8;
 
     try {
-      for (var _iterator8 = iterateAll(funcs, {
-        reverse: true
-      })[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+      for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
         var func = _step8.value.value;
         var currentNext = next;
         next = wrapFuncWithNext(func, currentNext);
       }
     } catch (err) {
-      _didIteratorError8 = true;
-      _iteratorError8 = err;
+      _iterator8.e(err);
     } finally {
-      try {
-        if (!_iteratorNormalCompletion8 && _iterator8["return"] != null) {
-          _iterator8["return"]();
-        }
-      } finally {
-        if (_didIteratorError8) {
-          throw _iteratorError8;
-        }
-      }
+      _iterator8.f();
     }
 
     return next;
@@ -1150,9 +1238,7 @@
     }
   }
 
-  var _marked$1 =
-  /*#__PURE__*/
-  regenerator.mark(iterateObjectWithoutDollarDash);
+  var _marked$1 = /*#__PURE__*/regenerator.mark(iterateObjectWithoutDollarDash);
   /**
    * [updatablePropsEvenUnbound description]
    * @param  {[type]} props [object or getter]
