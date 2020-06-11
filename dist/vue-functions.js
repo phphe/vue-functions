@@ -1,5 +1,5 @@
 /*!
- * vue-functions v2.0.5
+ * vue-functions v2.0.6
  * (c) phphe <phphe@outlook.com> (https://github.com/phphe)
  * Homepage: undefined
  * Released under the MIT License.
@@ -874,7 +874,7 @@
   });
 
   /*!
-   * helper-js v1.4.36
+   * helper-js v2.0.0
    * (c) phphe <phphe@outlook.com> (https://github.com/phphe)
    * Homepage: undefined
    * Released under the MIT License.
@@ -954,7 +954,7 @@
     }
 
     return arr2;
-  } // local store
+  } // 为此库有需要的方法存储信息
 
   function isObject(v) {
     return Object.prototype.toString.call(v) === '[object Object]';
@@ -966,7 +966,10 @@
 
   function isPromise(v) {
     return Object.prototype.toString.call(v) === '[object Promise]';
-  }
+  } // detect if argumrnt is null, undefined, empty array, empty string, false, NaN, empty object
+  // ## 数组
+  // remove item from array. return removed count
+  // 从数组删除项. 返回删除计数
 
 
   function arrayRemove(arr, v) {
@@ -979,23 +982,22 @@
     }
 
     return count;
-  }
-
+  } // remove items from array by sorted indexes. indexes example: [0, 2, 6, 8, 9]
 
   function iterateAll(val) {
     var opt,
         i,
         info,
-        _i7,
-        _Object$keys2,
+        _i2,
+        _Object$keys,
         key,
         _info,
-        _i8,
+        _i3,
         _info2,
         keys,
-        _i9,
-        _keys2,
-        _key2,
+        _i4,
+        _keys,
+        _key,
         _info3,
         _args = arguments;
 
@@ -1051,15 +1053,15 @@
               break;
             }
 
-            _i7 = 0, _Object$keys2 = Object.keys(val);
+            _i2 = 0, _Object$keys = Object.keys(val);
 
           case 16:
-            if (!(_i7 < _Object$keys2.length)) {
+            if (!(_i2 < _Object$keys.length)) {
               _context.next = 25;
               break;
             }
 
-            key = _Object$keys2[_i7];
+            key = _Object$keys[_i2];
             _info = {
               value: val[key],
               key: key
@@ -1074,7 +1076,7 @@
             return _info;
 
           case 22:
-            _i7++;
+            _i2++;
             _context.next = 16;
             break;
 
@@ -1095,17 +1097,17 @@
               break;
             }
 
-            _i8 = val.length - 1;
+            _i3 = val.length - 1;
 
           case 32:
-            if (!(_i8 >= 0)) {
+            if (!(_i3 >= 0)) {
               _context.next = 40;
               break;
             }
 
             _info2 = {
-              value: val[_i8],
-              index: _i8
+              value: val[_i3],
+              index: _i3
             };
 
             if (!(!opt.exclude || !opt.exclude(_info2))) {
@@ -1117,7 +1119,7 @@
             return _info2;
 
           case 37:
-            _i8--;
+            _i3--;
             _context.next = 32;
             break;
 
@@ -1133,18 +1135,18 @@
 
             keys = Object.keys(val);
             keys.reverse();
-            _i9 = 0, _keys2 = keys;
+            _i4 = 0, _keys = keys;
 
           case 46:
-            if (!(_i9 < _keys2.length)) {
+            if (!(_i4 < _keys.length)) {
               _context.next = 55;
               break;
             }
 
-            _key2 = _keys2[_i9];
+            _key = _keys[_i4];
             _info3 = {
-              value: val[_key2],
-              key: _key2
+              value: val[_key],
+              key: _key
             };
 
             if (!(!opt.exclude || !opt.exclude(_info3))) {
@@ -1156,7 +1158,7 @@
             return _info3;
 
           case 52:
-            _i9++;
+            _i4++;
             _context.next = 46;
             break;
 
@@ -1173,67 +1175,68 @@
         }
       }
     }, _marked);
-  } // Deprecated in next version
+  } // example: objectGet(window, 'document.body.children.0') . source: http://stackoverflow.com/questions/8817394/javascript-get-deep-value-from-object-by-passing-path-to-it-as-string
 
 
   function joinFunctionsByNext(funcs) {
     var next = function next() {};
 
-    var _iterator8 = _createForOfIteratorHelper(iterateAll(funcs, {
+    var _iterator7 = _createForOfIteratorHelper(iterateAll(funcs, {
       reverse: true
     })),
-        _step8;
+        _step7;
 
     try {
-      for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
-        var func = _step8.value.value;
+      for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
+        var func = _step7.value.value;
         var currentNext = next;
         next = wrapFuncWithNext(func, currentNext);
       }
     } catch (err) {
-      _iterator8.e(err);
+      _iterator7.e(err);
     } finally {
-      _iterator8.f();
+      _iterator7.f();
     }
 
     return next;
 
     function wrapFuncWithNext(func, next) {
       return function () {
-        for (var _len5 = arguments.length, args = new Array(_len5), _key7 = 0; _key7 < _len5; _key7++) {
-          args[_key7] = arguments[_key7];
+        for (var _len4 = arguments.length, args = new Array(_len4), _key5 = 0; _key5 < _len4; _key5++) {
+          args[_key5] = arguments[_key5];
         }
 
         return func.apply(void 0, [next].concat(args));
       };
     }
-  } // promise
-
+  } // ## promise
 
   function onDOM(el, name, handler) {
-    for (var _len6 = arguments.length, args = new Array(_len6 > 3 ? _len6 - 3 : 0), _key8 = 3; _key8 < _len6; _key8++) {
-      args[_key8 - 3] = arguments[_key8];
+    for (var _len5 = arguments.length, args = new Array(_len5 > 3 ? _len5 - 3 : 0), _key6 = 3; _key6 < _len5; _key6++) {
+      args[_key6 - 3] = arguments[_key6];
     }
 
     if (el.addEventListener) {
       // 所有主流浏览器，除了 IE 8 及更早 IE版本
-      el.addEventListener.apply(el, [name, handler].concat(args));
+      el.addEventListener.apply(el, [name, handler].concat(args)); // @ts-ignore
     } else if (el.attachEvent) {
       // IE 8 及更早 IE 版本
+      // @ts-ignore
       el.attachEvent.apply(el, ["on".concat(name), handler].concat(args));
     }
   }
 
   function offDOM(el, name, handler) {
-    for (var _len7 = arguments.length, args = new Array(_len7 > 3 ? _len7 - 3 : 0), _key9 = 3; _key9 < _len7; _key9++) {
-      args[_key9 - 3] = arguments[_key9];
+    for (var _len6 = arguments.length, args = new Array(_len6 > 3 ? _len6 - 3 : 0), _key7 = 3; _key7 < _len6; _key7++) {
+      args[_key7 - 3] = arguments[_key7];
     }
 
     if (el.removeEventListener) {
       // 所有主流浏览器，除了 IE 8 及更早 IE版本
-      el.removeEventListener.apply(el, [name, handler].concat(args));
+      el.removeEventListener.apply(el, [name, handler].concat(args)); // @ts-ignore
     } else if (el.detachEvent) {
       // IE 8 及更早 IE 版本
+      // @ts-ignore
       el.detachEvent.apply(el, ["on".concat(name), handler].concat(args));
     }
   }
@@ -1246,7 +1249,7 @@
    * props eg: {
       value: {$localName: 'current', $localSetter: (value, vm)},
     }
-     default localName is `localProps_${name}`
+    default localName is `localProps_${name}`
    */
 
   function updatablePropsEvenUnbound(props) {

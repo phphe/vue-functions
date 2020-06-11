@@ -1,6 +1,6 @@
 {
   "name": "vue-functions",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "",
   "main": "dist/vue-functions.cjs.js",
   "module": "dist/vue-functions.esm.js",
@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.7.7",
-    "helper-js": "^1.4.36"
+    "helper-js": "^2.0.0"
   },
   "license": "MIT"
 }

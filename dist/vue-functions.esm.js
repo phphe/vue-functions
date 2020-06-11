@@ -1,5 +1,5 @@
 /*!
- * vue-functions v2.0.5
+ * vue-functions v2.0.6
  * (c) phphe <phphe@outlook.com> (https://github.com/phphe)
  * Homepage: undefined
  * Released under the MIT License.
@@ -16,7 +16,7 @@ var _marked = /*#__PURE__*/_regeneratorRuntime.mark(iterateObjectWithoutDollarDa
  * props eg: {
     value: {$localName: 'current', $localSetter: (value, vm)},
   }
-   default localName is `localProps_${name}`
+  default localName is `localProps_${name}`
  */
 
 function updatablePropsEvenUnbound(props) {

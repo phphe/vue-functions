@@ -7,7 +7,7 @@ import * as hp from 'helper-js'
  * props eg: {
     value: {$localName: 'current', $localSetter: (value, vm)},
   }
-   default localName is `localProps_${name}`
+  default localName is `localProps_${name}`
  */
 export function updatablePropsEvenUnbound(props) {
   if (hp.isFunction(props)) {
